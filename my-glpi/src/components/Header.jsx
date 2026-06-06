@@ -9,6 +9,7 @@ function Header() {
     const [isSubmitting , setIsSubmitting] = useState(false);
     const navigate = useNavigate();
     const [error , setError] = useState(null);
+    const isBO = sessionStorage.getItem("bo-token") !== null;
 
 
     const handleLogout = async() => {
@@ -45,34 +46,40 @@ function Header() {
                 <div className="flex flex-1 items-center justify-end md:justify-between">
                     <nav aria-label="Global" className="hidden md:block">
                         <ul className="flex items-center gap-6 text-sm">
+                            {isBO && (
+                                <>
+                                    <li>
+                                        <a className="text-gray-500 transition hover:text-gray-500/75" href="#"> Dashboard </a>
+                                    </li>
+
+                                    <li>
+                                        <a className="text-gray-500 transition hover:text-gray-500/75" href="/bo/reset"> Reset </a>
+                                    </li>
+
+                                    <li>
+                                        <a className="text-gray-500 transition hover:text-gray-500/75" href="/bo/import"> Import </a>
+                                    </li>
+
+                                    <li>
+                                        <a className="text-gray-500 transition hover:text-gray-500/75" href="#"> Tickets </a>
+                                    </li>
+                                </>
+                            )}
 
                             <li>
-                                <a className="text-gray-500 transition hover:text-gray-500/75" href="#"> Dashboard </a>
+                                <a className="text-gray-500 transition hover:text-gray-500/75" href="/fo/assets"> Assets </a>
                             </li>
+                            
 
                             <li>
-                                <a className="text-gray-500 transition hover:text-gray-500/75" href="/accueil/reset"> Reset </a>
-                            </li>
-
-                            <li>
-                                <a className="text-gray-500 transition hover:text-gray-500/75" href="/accueil/import"> Import </a>
-                            </li>
-
-                            <li>
-                                <a className="text-gray-500 transition hover:text-gray-500/75" href="#"> Tickets </a>
-                            </li>
-
-                            <li>
-                                <a className="text-gray-500 transition hover:text-gray-500/75" href="#"> Projects </a>
-                            </li>
-
-                            <li>
-                                <a className="text-gray-500 transition hover:text-gray-500/75" href="#"> Blog </a>
+                                <a className="text-gray-500 transition hover:text-gray-500/75" href="/fo/ticket/add"> Add Ticket  </a>
                             </li>
                         </ul>
                     </nav>
 
-                    <div className="flex items-center gap-4">
+                    {isBO && (
+
+                        <div className="flex items-center gap-4">
                         <div className="sm:flex sm:gap-4">
                             <button disabled={isSubmitting}
                             className={`w-full text-white bg-teal-600 hover:bg-teal-700 focus:ring-4 focus:outline-none focus:ring-teal-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
@@ -89,6 +96,7 @@ function Header() {
                             </button>
                         </div>
                     </div>
+                    )}
                 </div>
             </div>
             {error && (

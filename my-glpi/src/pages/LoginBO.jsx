@@ -20,7 +20,7 @@ function LoginBO() {
             setLoading(true);
             const retour = await loginBO(inputs.username , inputs.password);
             const glpi = await loginGlpi(inputs.username , inputs.password);
-            navigate("/accueil");   
+            navigate("/bo");   
         } catch (error) {
             setError("Login failed. Please check your credentials.");
             throw error;
@@ -28,6 +28,19 @@ function LoginBO() {
             setLoading(false);
         }
     }
+
+    const handleAccessFO = async() => {
+        try {
+            setLoading(true);
+            await loginGlpi(inputs.username , inputs.password);
+            navigate("/fo");
+        } catch (error) {
+            setError("Login failed. Please check your credentials.");
+            throw error;
+        } finally {
+            setLoading(false);
+        }
+    }   
 
 
     return (
@@ -50,6 +63,7 @@ function LoginBO() {
                             </div>
                             <button disabled={loading} type="submit" className={`w-full text-white bg-teal-600 hover:bg-teal-700 focus:ring-4 focus:outline-none focus:ring-teal-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}>Sign in</button>
                         </form>
+                        <button disabled={loading} onClick={handleAccessFO} className={`w-full text-white bg-teal-600 hover:bg-teal-700 focus:ring-4 focus:outline-none focus:ring-teal-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}>Acceder au front-office</button>
                     </div>
                 </div>
             </div>

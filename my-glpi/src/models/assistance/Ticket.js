@@ -55,7 +55,6 @@ export async function save(ticket) {
                 }))
             };
 
-            console.log(" [DEBUG] Linking items to ticket - Ticket ID:", id, "Items Payload:", itemsBody);
             await apiCall(`${BASE_URL}/v1/Item_Ticket`, "POST", headers, itemsBody);
         }
 

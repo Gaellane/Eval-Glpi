@@ -2,6 +2,9 @@ import { apiCall } from "../../services/api/api";
 
 const BASE_URL = import.meta.env.VITE_BACKEND_GLPI_URL;
 const v1_endpoint = BASE_URL + '/v1/';
+const v2_endpoint = BASE_URL + '/v2.3/Assets/';
+const v1token = sessionStorage.getItem("session-token-v1");
+const v2token = sessionStorage.getItem("user-token");
 
 const ASSET_FIELDS = {
     Computer:           { model: "computermodels_id",           hasContact: true  },
@@ -17,9 +20,10 @@ const ASSET_FIELDS = {
     Unmanaged:          { model: null,                          hasContact: false },
 };
 
-export function createAsset(item_type, name, contact, otherserial, state, location, model, manufacturer, id = null) {
+export function createAsset(item_type, name, contact, otherserial, state, location, model, manufacturer, id = null , image) {
     const asset = { item_type, name, contact, otherserial, is_recursive: true, state, location, model, manufacturer };
     if (id) asset.id = id;
+    if (image) asset.image = image;
     return asset;
 }
 
@@ -53,7 +57,7 @@ export async function save(asset) {
 
     const url = v1_endpoint + item_type;
     const headers = {
-        "Session-Token": sessionStorage.getItem("session-token-v1"),
+        "Session-Token": v1token,
         "Content-Type": "application/json"
     };
 
@@ -80,3 +84,48 @@ export async function saveMultiple(assets) {
     }
 }
 
+
+function getImage(asset_name , documents) {
+    console.log(` [DEBUG] Searching for image - Asset Name: "${asset_name}" - Documents Available: ` , documents);   
+    if (!documents || documents.length === 0) return null;
+    return documents.find(doc => doc.name.trim().toLowerCase().includes(asset_name.trim().toLowerCase()));
+}
+
+async function getAllByType(type , documents) {
+    try {
+        const url = v2_endpoint + type;
+        const headers = {
+            "Authorization": `Bearer ${v2token}`
+        };
+        const response = await apiCall(url, "GET", headers);
+
+        return response.map(r => {
+            const img = getImage(r.name, documents);
+            console.log(` [DEBUG] Asset: ${r.name} - Image found: ${img}`);
+            return createAsset(
+                type,
+                r.name,
+                r.contact || null,
+                r.otherserial,
+                r.status,
+                r.location || null,
+                r.model || null,
+                r.manufacturer || null,
+                r.id,
+                img
+            );
+        });
+    } catch (error) {
+        console.error(`Error fetching all ${type}:`, error);
+        throw error;
+    }
+}
+
+export async function getAllAssets(documents) {
+    const retour = {};
+    for (const type of Object.keys(ASSET_FIELDS)) {
+        const items = await getAllByType(type , documents);
+        retour[type] = items;
+    }
+    return retour;
+}

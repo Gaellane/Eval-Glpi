@@ -1,31 +1,23 @@
 import { useEffect } from "react";
 import Header from "../components/Header";
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import { loginGlpi } from "../services/login/login";
+import { chargerDataStorage } from "../services/data/data";
 
-
-function MainLayoutBO() {
-
-    const navigate = useNavigate();
+function MainLayoutFO() {
     const assets = JSON.parse(localStorage.getItem("assets") || null);
     const docs = JSON.parse(localStorage.getItem("documents") || null);
 
+
     useEffect(() => {
         const chargerDate = async () => {
-            if (!assets || !docs) {
-                const retour = await chargerDataStorage();
-            }
+          if (!assets || !docs) {
+              const retour = await chargerDataStorage();
+          }
         }
         chargerDate();
     }, [])
 
-
-    useEffect(() => {
-        const token = sessionStorage.getItem("bo-token");
-        if (!token) {
-            navigate("/");
-        }
-    }, [navigate]);
 
     useEffect(() => {
         const getToken = async () => {
@@ -48,4 +40,4 @@ function MainLayoutBO() {
     )
 }
 
-export default MainLayoutBO;
+export default MainLayoutFO;
