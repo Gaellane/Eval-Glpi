@@ -1,0 +1,1584 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Documentation API REST GLPI 11.0.7</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Syne:wght@400;600;700;800&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0d0f14;
+  --bg2: #13161e;
+  --bg3: #1a1d27;
+  --bg4: #202430;
+  --border: #2a2e3d;
+  --border2: #353a4d;
+  --text: #e8eaf0;
+  --text2: #9ba3bb;
+  --text3: #6b7492;
+  --accent: #4f8ef7;
+  --accent2: #7cb9ff;
+  --accent-bg: rgba(79,142,247,0.1);
+  --green: #34d399;
+  --green-bg: rgba(52,211,153,0.1);
+  --amber: #fbbf24;
+  --amber-bg: rgba(251,191,36,0.1);
+  --red: #f87171;
+  --red-bg: rgba(248,113,113,0.1);
+  --purple: #a78bfa;
+  --purple-bg: rgba(167,139,250,0.1);
+  --teal: #2dd4bf;
+  --teal-bg: rgba(45,212,191,0.1);
+  --radius: 8px;
+  --radius-lg: 12px;
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'Inter', sans-serif;
+  --display: 'Syne', sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  display: flex;
+  min-height: 100vh;
+  font-size: 14px;
+  line-height: 1.6;
+}
+/* Sidebar */
+#sidebar {
+  width: 260px;
+  min-width: 260px;
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  padding: 0 0 2rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border2) transparent;
+}
+.sidebar-logo {
+  padding: 1.5rem 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 0.75rem;
+}
+.sidebar-logo h1 {
+  font-family: var(--display);
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: var(--text);
+}
+.sidebar-logo .version {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--accent);
+  background: var(--accent-bg);
+  padding: 2px 8px;
+  border-radius: 4px;
+  display: inline-block;
+  margin-top: 4px;
+}
+.nav-section {
+  padding: 0.5rem 0;
+}
+.nav-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text3);
+  padding: 0.25rem 1.25rem;
+  margin-bottom: 2px;
+}
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 1.25rem;
+  color: var(--text2);
+  text-decoration: none;
+  font-size: 13px;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+}
+.nav-link:hover, .nav-link.active {
+  color: var(--accent2);
+  background: var(--accent-bg);
+  border-left-color: var(--accent);
+}
+.nav-link .badge {
+  font-size: 10px;
+  font-family: var(--mono);
+  padding: 1px 6px;
+  border-radius: 4px;
+  margin-left: auto;
+}
+.badge-get { background: var(--green-bg); color: var(--green); }
+.badge-post { background: var(--amber-bg); color: var(--amber); }
+.badge-put { background: var(--purple-bg); color: var(--purple); }
+.badge-del { background: var(--red-bg); color: var(--red); }
+.badge-v1 { background: var(--accent-bg); color: var(--accent); }
+.badge-v2 { background: var(--teal-bg); color: var(--teal); }
+/* Main */
+#main {
+  flex: 1;
+  overflow-x: hidden;
+  padding: 0;
+}
+.page-header {
+  background: linear-gradient(135deg, #0d0f14 0%, #131829 50%, #0d1020 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 3rem 3rem 2.5rem;
+  position: relative;
+  overflow: hidden;
+}
+.page-header::before {
+  content: '';
+  position: absolute;
+  top: -80px; right: -80px;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(79,142,247,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+.page-header::after {
+  content: 'GLPI REST API';
+  position: absolute;
+  bottom: -20px; right: 2rem;
+  font-family: var(--display);
+  font-size: 100px;
+  font-weight: 800;
+  color: rgba(255,255,255,0.02);
+  pointer-events: none;
+  white-space: nowrap;
+}
+.page-header h1 {
+  font-family: var(--display);
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 0.5rem;
+}
+.page-header p {
+  color: var(--text2);
+  font-size: 15px;
+  max-width: 600px;
+}
+.header-meta {
+  display: flex;
+  gap: 10px;
+  margin-top: 1.25rem;
+  flex-wrap: wrap;
+}
+.meta-pill {
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid;
+}
+.meta-pill.blue { border-color: var(--accent); color: var(--accent); background: var(--accent-bg); }
+.meta-pill.green { border-color: var(--green); color: var(--green); background: var(--green-bg); }
+.meta-pill.amber { border-color: var(--amber); color: var(--amber); background: var(--amber-bg); }
+/* Content sections */
+.content {
+  padding: 2.5rem 3rem;
+  max-width: 960px;
+}
+section { margin-bottom: 3.5rem; }
+.section-title {
+  font-family: var(--display);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.section-title .num {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--accent);
+  background: var(--accent-bg);
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+h3 {
+  font-family: var(--display);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 1.5rem 0 0.75rem;
+}
+h4 {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text2);
+  margin: 1rem 0 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+p { color: var(--text2); margin-bottom: 0.75rem; line-height: 1.7; }
+/* Cards */
+.card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+}
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+.resource-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+  transition: border-color 0.2s;
+}
+.resource-card:hover { border-color: var(--border2); }
+.resource-card .resource-name {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--accent2);
+  margin-bottom: 4px;
+}
+.resource-card .resource-desc {
+  font-size: 12px;
+  color: var(--text3);
+  line-height: 1.5;
+}
+.resource-card .resource-type {
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 4px;
+  display: inline-block;
+  margin-top: 6px;
+}
+.type-asset { background: var(--green-bg); color: var(--green); }
+.type-itil { background: var(--amber-bg); color: var(--amber); }
+.type-mgmt { background: var(--purple-bg); color: var(--purple); }
+.type-config { background: var(--teal-bg); color: var(--teal); }
+/* Endpoint tables */
+.endpoint-block {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  margin-bottom: 1.25rem;
+  overflow: hidden;
+}
+.endpoint-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0.875rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg2);
+  cursor: pointer;
+  user-select: none;
+}
+.endpoint-header:hover { background: var(--bg4); }
+.method-badge {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 4px;
+  min-width: 52px;
+  text-align: center;
+}
+.m-get { background: var(--green-bg); color: var(--green); border: 1px solid rgba(52,211,153,0.3); }
+.m-post { background: var(--amber-bg); color: var(--amber); border: 1px solid rgba(251,191,36,0.3); }
+.m-put { background: var(--purple-bg); color: var(--purple); border: 1px solid rgba(167,139,250,0.3); }
+.m-patch { background: var(--teal-bg); color: var(--teal); border: 1px solid rgba(45,212,191,0.3); }
+.m-delete { background: var(--red-bg); color: var(--red); border: 1px solid rgba(248,113,113,0.3); }
+.endpoint-url {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--text);
+  flex: 1;
+}
+.endpoint-url .base { color: var(--text3); }
+.endpoint-url .path { color: var(--accent2); }
+.endpoint-url .param { color: var(--amber); }
+.endpoint-desc {
+  font-size: 12px;
+  color: var(--text3);
+  margin-left: auto;
+  white-space: nowrap;
+}
+.endpoint-body {
+  padding: 1.25rem;
+}
+/* Tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin-bottom: 1rem;
+}
+th {
+  text-align: left;
+  padding: 8px 12px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text3);
+  background: var(--bg4);
+  border-bottom: 1px solid var(--border);
+}
+td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+  color: var(--text2);
+}
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--bg4); }
+.field-name { font-family: var(--mono); font-size: 12px; color: var(--accent2); }
+.field-type { font-family: var(--mono); font-size: 11px; color: var(--purple); }
+.required-badge { font-size: 10px; color: var(--red); background: var(--red-bg); padding: 1px 6px; border-radius: 3px; }
+.optional-badge { font-size: 10px; color: var(--text3); background: var(--bg4); padding: 1px 6px; border-radius: 3px; }
+/* Code blocks */
+pre {
+  background: #080a0f;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  overflow-x: auto;
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.7;
+  margin: 0.75rem 0;
+  position: relative;
+}
+pre .comment { color: #4a5568; }
+pre .key { color: #a78bfa; }
+pre .string { color: #68d391; }
+pre .number { color: #f6ad55; }
+pre .method { color: #63b3ed; }
+pre .url { color: #4fd1c5; }
+pre .header { color: #f687b3; }
+.code-label {
+  font-size: 10px;
+  font-family: var(--mono);
+  color: var(--text3);
+  padding: 4px 10px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 4px 4px 0 0;
+  border-bottom: none;
+  display: inline-block;
+  margin-bottom: 0;
+}
+/* Alerts */
+.alert {
+  padding: 0.875rem 1.25rem;
+  border-radius: var(--radius);
+  border-left: 3px solid;
+  margin: 1rem 0;
+  font-size: 13px;
+}
+.alert-info { background: var(--accent-bg); border-color: var(--accent); color: var(--accent2); }
+.alert-warn { background: var(--amber-bg); border-color: var(--amber); color: var(--amber); }
+.alert-danger { background: var(--red-bg); border-color: var(--red); color: var(--red); }
+.alert-success { background: var(--green-bg); border-color: var(--green); color: var(--green); }
+/* Auth flow */
+.auth-flow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 1.25rem;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  margin: 1rem 0;
+}
+.auth-step {
+  background: var(--bg4);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  padding: 0.5rem 0.875rem;
+  font-size: 12px;
+  color: var(--text2);
+  font-family: var(--mono);
+}
+.auth-arrow { color: var(--text3); font-size: 16px; }
+/* HTTP codes */
+.http-codes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+.http-code {
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius);
+  border: 1px solid;
+}
+.code-2xx { background: var(--green-bg); border-color: rgba(52,211,153,0.3); }
+.code-2xx .code-num { font-family: var(--mono); font-size: 18px; font-weight: 700; color: var(--green); }
+.code-3xx { background: var(--teal-bg); border-color: rgba(45,212,191,0.3); }
+.code-3xx .code-num { font-family: var(--mono); font-size: 18px; font-weight: 700; color: var(--teal); }
+.code-4xx { background: var(--amber-bg); border-color: rgba(251,191,36,0.3); }
+.code-4xx .code-num { font-family: var(--mono); font-size: 18px; font-weight: 700; color: var(--amber); }
+.code-5xx { background: var(--red-bg); border-color: rgba(248,113,113,0.3); }
+.code-5xx .code-num { font-family: var(--mono); font-size: 18px; font-weight: 700; color: var(--red); }
+.code-label-txt { font-size: 11px; color: var(--text3); margin-top: 2px; }
+/* Collapsible */
+.collapsible { display: block; }
+.collapsible.collapsed { display: none; }
+.chevron { transition: transform 0.2s; color: var(--text3); font-size: 14px; margin-left: auto; }
+.chevron.open { transform: rotate(180deg); }
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1rem;
+}
+.tab-btn {
+  padding: 6px 14px;
+  font-size: 12px;
+  font-family: var(--mono);
+  background: none;
+  border: none;
+  color: var(--text3);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: all 0.15s;
+}
+.tab-btn:hover { color: var(--text2); }
+.tab-btn.active { color: var(--accent2); border-bottom-color: var(--accent); }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+/* Search filter */
+#search-box {
+  width: calc(100% - 2.5rem);
+  margin: 0 1.25rem 0.5rem;
+  padding: 6px 10px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-size: 12px;
+  font-family: var(--mono);
+  outline: none;
+}
+#search-box:focus { border-color: var(--accent); }
+/* Copy button */
+.copy-btn {
+  position: absolute;
+  top: 8px; right: 8px;
+  background: var(--bg4);
+  border: 1px solid var(--border);
+  color: var(--text3);
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: var(--mono);
+  transition: all 0.15s;
+}
+.copy-btn:hover { color: var(--text); border-color: var(--border2); }
+/* Footer */
+.doc-footer {
+  margin-top: 4rem;
+  padding: 2rem 3rem;
+  border-top: 1px solid var(--border);
+  color: var(--text3);
+  font-size: 12px;
+}
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+.inline-code {
+  font-family: var(--mono);
+  font-size: 12px;
+  background: var(--bg4);
+  padding: 1px 6px;
+  border-radius: 3px;
+  color: var(--accent2);
+}
+ul { list-style: none; padding: 0; }
+ul li {
+  padding: 4px 0;
+  color: var(--text2);
+  font-size: 13px;
+  padding-left: 1rem;
+  position: relative;
+}
+ul li::before {
+  content: '›';
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+}
+.rsql-table table { font-size: 12px; }
+.rsql-table .example { color: var(--green); font-family: var(--mono); }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div class="sidebar-logo">
+    <h1>GLPI API Docs</h1>
+    <span class="version">v11.0.7</span>
+  </div>
+  <input type="text" id="search-box" placeholder="Rechercher..." oninput="filterNav(this.value)">
+  
+  <div class="nav-section">
+    <div class="nav-label">Introduction</div>
+    <a href="#overview" class="nav-link">Vue d'ensemble</a>
+    <a href="#architectures" class="nav-link">API v1 vs v2</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Authentification</div>
+    <a href="#auth-v1" class="nav-link">Auth v1 (Session)<span class="badge badge-v1">v1</span></a>
+    <a href="#auth-v2" class="nav-link">Auth v2 (OAuth2)<span class="badge badge-v2">v2</span></a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Ressources</div>
+    <a href="#resources" class="nav-link">Toutes les ressources</a>
+    <a href="#endpoints-session" class="nav-link">Session / Profil</a>
+    <a href="#endpoints-crud" class="nav-link">CRUD générique</a>
+    <a href="#endpoints-ticket" class="nav-link">Ticket (ITIL)</a>
+    <a href="#endpoints-computer" class="nav-link">Computer (Asset)</a>
+    <a href="#endpoints-user" class="nav-link">User</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Données</div>
+    <a href="#data-formats" class="nav-link">Formats JSON</a>
+    <a href="#ticket-schema" class="nav-link">Schéma Ticket</a>
+    <a href="#user-schema" class="nav-link">Schéma User</a>
+    <a href="#computer-schema" class="nav-link">Schéma Computer</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Fonctionnalités</div>
+    <a href="#pagination" class="nav-link">Pagination & Tri</a>
+    <a href="#search" class="nav-link">Search API</a>
+    <a href="#rsql" class="nav-link">RSQL (v2)</a>
+    <a href="#examples" class="nav-link">Exemples concrets</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Référence</div>
+    <a href="#http-codes" class="nav-link">Codes HTTP</a>
+    <a href="#best-practices" class="nav-link">Bonnes pratiques</a>
+    <a href="#security" class="nav-link">Sécurité</a>
+  </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<div id="main">
+  <div class="page-header">
+    <h1>Documentation API REST GLPI</h1>
+    <p>Référence complète de l'API REST GLPI — deux architectures disponibles : Low-Level (v1) et High-Level (v2) avec support OAuth2, RSQL et GraphQL.</p>
+    <div class="header-meta">
+      <span class="meta-pill blue">GLPI 11.0.7</span>
+      <span class="meta-pill green">API v1 — /apirest.php</span>
+      <span class="meta-pill amber">API v2 — /api.php</span>
+    </div>
+  </div>
+  
+  <div class="content">
+
+    <!-- 0. VUE D'ENSEMBLE -->
+    <section id="overview">
+      <div class="section-title"><span class="num">00</span> Vue d'ensemble</div>
+      <p>L'API REST GLPI expose toutes les ressources du système d'information via HTTP. Elle permet aux applications externes d'effectuer des opérations CRUD, des recherches avancées, des actions massives et des téléversements de fichiers.</p>
+      <div class="alert alert-info">
+        <strong>Prérequis :</strong> Activer l'API dans <em>Configuration &gt; Générale &gt; API</em>. Définir l'URL de l'API correspondant à votre instance GLPI. Créer un client API pour obtenir un <span class="inline-code">App-Token</span>.
+      </div>
+      
+      <div id="architectures">
+        <h3>Deux architectures d'API</h3>
+        <div class="card-grid">
+          <div class="resource-card">
+            <div class="resource-name">API v1 — Low-Level</div>
+            <div class="resource-desc">Accès direct aux objets CommonDBTM. Endpoint principal : <code>/apirest.php</code>. Authentification par Session-Token + App-Token.</div>
+            <span class="resource-type type-config">Stable / Legacy</span>
+          </div>
+          <div class="resource-card">
+            <div class="resource-name">API v2 — High-Level</div>
+            <div class="resource-desc">Couche d'abstraction moderne. Endpoint : <code>/api.php/v2/</code>. OAuth2, RSQL filtering, OpenAPI/Swagger, GraphQL.</div>
+            <span class="resource-type type-itil">Moderne / Recommandée</span>
+          </div>
+        </div>
+        <div class="alert alert-warn">
+          <strong>Note GLPI 11 :</strong> L'API v2 est désormais disponible et recommandée pour les nouvelles intégrations. L'API v1 reste entièrement fonctionnelle. Spécifier <span class="inline-code">v1</span> dans l'URL route vers le legacy, <span class="inline-code">v2</span> vers la High-Level API.
+        </div>
+      </div>
+    </section>
+
+    <!-- 1. RESSOURCES -->
+    <section id="resources">
+      <div class="section-title"><span class="num">01</span> Ressources disponibles</div>
+      
+      <h3>Assets (Matériel & Logiciels)</h3>
+      <div class="card-grid">
+        <div class="resource-card"><div class="resource-name">Computer</div><div class="resource-desc">Ordinateurs, serveurs, postes de travail</div><span class="resource-type type-asset">Asset</span></div>
+        <div class="resource-card"><div class="resource-name">Monitor</div><div class="resource-desc">Moniteurs et écrans</div><span class="resource-type type-asset">Asset</span></div>
+        <div class="resource-card"><div class="resource-name">NetworkEquipment</div><div class="resource-desc">Routeurs, switchs, équipements réseau</div><span class="resource-type type-asset">Asset</span></div>
+        <div class="resource-card"><div class="resource-name">Printer</div><div class="resource-desc">Imprimantes et périphériques d'impression</div><span class="resource-type type-asset">Asset</span></div>
+        <div class="resource-card"><div class="resource-name">Peripheral</div><div class="resource-desc">Périphériques divers (souris, claviers...)</div><span class="resource-type type-asset">Asset</span></div>
+        <div class="resource-card"><div class="resource-name">Phone</div><div class="resource-desc">Téléphones fixes et mobiles</div><span class="resource-type type-asset">Asset</span></div>
+        <div class="resource-card"><div class="resource-name">Software</div><div class="resource-desc">Logiciels et applications</div><span class="resource-type type-asset">Asset</span></div>
+        <div class="resource-card"><div class="resource-name">SoftwareLicense</div><div class="resource-desc">Licences logicielles</div><span class="resource-type type-asset">Asset</span></div>
+        <div class="resource-card"><div class="resource-name">Certificate</div><div class="resource-desc">Certificats SSL/TLS</div><span class="resource-type type-asset">Asset</span></div>
+        <div class="resource-card"><div class="resource-name">Rack</div><div class="resource-desc">Baies de serveurs</div><span class="resource-type type-asset">Asset</span></div>
+        <div class="resource-card"><div class="resource-name">PDU</div><div class="resource-desc">Unités de distribution d'énergie</div><span class="resource-type type-asset">Asset</span></div>
+        <div class="resource-card"><div class="resource-name">Enclosure</div><div class="resource-desc">Châssis et boîtiers</div><span class="resource-type type-asset">Asset</span></div>
+      </div>
+
+      <h3>ITIL (Tickets & Gestion de services)</h3>
+      <div class="card-grid">
+        <div class="resource-card"><div class="resource-name">Ticket</div><div class="resource-desc">Incidents et demandes de service</div><span class="resource-type type-itil">ITIL</span></div>
+        <div class="resource-card"><div class="resource-name">Problem</div><div class="resource-desc">Problèmes ITIL</div><span class="resource-type type-itil">ITIL</span></div>
+        <div class="resource-card"><div class="resource-name">Change</div><div class="resource-desc">Changements planifiés</div><span class="resource-type type-itil">ITIL</span></div>
+        <div class="resource-card"><div class="resource-name">ITILFollowup</div><div class="resource-desc">Suivis de tickets/problèmes/changements</div><span class="resource-type type-itil">ITIL</span></div>
+        <div class="resource-card"><div class="resource-name">TicketTask</div><div class="resource-desc">Tâches liées aux tickets</div><span class="resource-type type-itil">ITIL</span></div>
+        <div class="resource-card"><div class="resource-name">TicketValidation</div><div class="resource-desc">Validations de tickets</div><span class="resource-type type-itil">ITIL</span></div>
+        <div class="resource-card"><div class="resource-name">ITILSolution</div><div class="resource-desc">Solutions appliquées aux tickets</div><span class="resource-type type-itil">ITIL</span></div>
+        <div class="resource-card"><div class="resource-name">TicketCost</div><div class="resource-desc">Coûts associés aux tickets</div><span class="resource-type type-itil">ITIL</span></div>
+      </div>
+
+      <h3>Gestion & Administration</h3>
+      <div class="card-grid">
+        <div class="resource-card"><div class="resource-name">User</div><div class="resource-desc">Utilisateurs GLPI</div><span class="resource-type type-mgmt">Gestion</span></div>
+        <div class="resource-card"><div class="resource-name">Group</div><div class="resource-desc">Groupes d'utilisateurs</div><span class="resource-type type-mgmt">Gestion</span></div>
+        <div class="resource-card"><div class="resource-name">Entity</div><div class="resource-desc">Entités organisationnelles</div><span class="resource-type type-mgmt">Gestion</span></div>
+        <div class="resource-card"><div class="resource-name">Profile</div><div class="resource-desc">Profils et droits d'accès</div><span class="resource-type type-mgmt">Gestion</span></div>
+        <div class="resource-card"><div class="resource-name">Contract</div><div class="resource-desc">Contrats fournisseurs</div><span class="resource-type type-mgmt">Gestion</span></div>
+        <div class="resource-card"><div class="resource-name">Supplier</div><div class="resource-desc">Fournisseurs</div><span class="resource-type type-mgmt">Gestion</span></div>
+        <div class="resource-card"><div class="resource-name">Contact</div><div class="resource-desc">Contacts fournisseurs</div><span class="resource-type type-mgmt">Gestion</span></div>
+        <div class="resource-card"><div class="resource-name">Document</div><div class="resource-desc">Documents et fichiers attachés</div><span class="resource-type type-mgmt">Gestion</span></div>
+        <div class="resource-card"><div class="resource-name">Budget</div><div class="resource-desc">Budgets</div><span class="resource-type type-mgmt">Gestion</span></div>
+        <div class="resource-card"><div class="resource-name">Location</div><div class="resource-desc">Localisations physiques</div><span class="resource-type type-mgmt">Gestion</span></div>
+        <div class="resource-card"><div class="resource-name">Project</div><div class="resource-desc">Projets</div><span class="resource-type type-mgmt">Gestion</span></div>
+        <div class="resource-card"><div class="resource-name">Reminder</div><div class="resource-desc">Notes et rappels</div><span class="resource-type type-mgmt">Gestion</span></div>
+      </div>
+
+      <h3>Configuration & Dropdowns</h3>
+      <div class="card-grid">
+        <div class="resource-card"><div class="resource-name">ITILCategory</div><div class="resource-desc">Catégories ITIL</div><span class="resource-type type-config">Config</span></div>
+        <div class="resource-card"><div class="resource-name">State</div><div class="resource-desc">États des éléments</div><span class="resource-type type-config">Config</span></div>
+        <div class="resource-card"><div class="resource-name">Manufacturer</div><div class="resource-desc">Fabricants</div><span class="resource-type type-config">Config</span></div>
+        <div class="resource-card"><div class="resource-name">ComputerType</div><div class="resource-desc">Types d'ordinateurs</div><span class="resource-type type-config">Config</span></div>
+        <div class="resource-card"><div class="resource-name">Network</div><div class="resource-desc">Réseaux</div><span class="resource-type type-config">Config</span></div>
+        <div class="resource-card"><div class="resource-name">RequestType</div><div class="resource-desc">Types de demandes</div><span class="resource-type type-config">Config</span></div>
+      </div>
+    </section>
+
+    <!-- 2. AUTHENTIFICATION -->
+    <section id="auth-v1">
+      <div class="section-title"><span class="num">02</span> Authentification — API v1</div>
+      
+      <div class="auth-flow">
+        <div class="auth-step">App-Token (optionnel)</div>
+        <span class="auth-arrow">+</span>
+        <div class="auth-step">login/password ou user_token</div>
+        <span class="auth-arrow">→</span>
+        <div class="auth-step">GET /initSession</div>
+        <span class="auth-arrow">→</span>
+        <div class="auth-step">session_token</div>
+        <span class="auth-arrow">→</span>
+        <div class="auth-step">Appels API</div>
+      </div>
+
+      <h3>Méthode 1 — Login / Mot de passe (Basic Auth)</h3>
+      <div class="code-label">bash — initSession avec credentials</div>
+      <pre><span class="comment"># Base64("{login}:{password}") dans l'en-tête Authorization</span>
+curl -X GET \
+  -H <span class="string">'Content-Type: application/json'</span> \
+  -H <span class="header">"Authorization: Basic Z2xwaTpnbHBp"</span> \
+  -H <span class="header">"App-Token: f7g3csp8mgatg5ebc5elnazakw20i9fyev1qopya7"</span> \
+  <span class="url">'https://glpi.mondomaine.fr/apirest.php/initSession'</span>
+
+<span class="comment"># Réponse 200 OK</span>
+{
+  <span class="key">"session_token"</span>: <span class="string">"83af7e620c83a50a18d3eac2f6ed05a3ca0bea62"</span>
+}</pre>
+
+      <h3>Méthode 2 — User Token (Personnel)</h3>
+      <div class="code-label">bash — initSession avec user_token</div>
+      <pre><span class="comment"># Token trouvé dans : Préférences utilisateur > Clé d'accès distante</span>
+curl -X GET \
+  -H <span class="string">'Content-Type: application/json'</span> \
+  -H <span class="header">"Authorization: user_token q56hqkniwot8wntb3z1qarka5atf365taaa2uyjrn"</span> \
+  -H <span class="header">"App-Token: f7g3csp8mgatg5ebc5elnazakw20i9fyev1qopya7"</span> \
+  <span class="url">'https://glpi.mondomaine.fr/apirest.php/initSession'</span></pre>
+
+      <h3>Headers requis pour tous les appels API v1</h3>
+      <table>
+        <thead><tr><th>Header</th><th>Valeur</th><th>Statut</th></tr></thead>
+        <tbody>
+          <tr><td class="field-name">Content-Type</td><td>application/json</td><td><span class="required-badge">Obligatoire</span></td></tr>
+          <tr><td class="field-name">Session-Token</td><td>Token retourné par initSession</td><td><span class="required-badge">Obligatoire</span></td></tr>
+          <tr><td class="field-name">App-Token</td><td>Token du client API (Config GLPI)</td><td><span class="optional-badge">Optionnel*</span></td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:12px; color:var(--text3);">* Obligatoire si configuré dans le client API GLPI.</p>
+
+      <h3>Terminer une session</h3>
+      <div class="code-label">bash — killSession</div>
+      <pre>curl -X GET \
+  -H <span class="string">'Content-Type: application/json'</span> \
+  -H <span class="header">"Session-Token: 83af7e620c83a50a18d3eac2f6ed05a3ca0bea62"</span> \
+  <span class="url">'https://glpi.mondomaine.fr/apirest.php/killSession'</span>
+
+<span class="comment"># Réponse 200 OK</span></pre>
+    </section>
+
+    <section id="auth-v2">
+      <div class="section-title"><span class="num">03</span> Authentification — API v2 (OAuth2)</div>
+      
+      <div class="alert alert-info">
+        L'API v2 utilise exclusivement OAuth2. Créer le client OAuth dans <em>Configuration &gt; Clients OAuth</em>. Chaque client génère automatiquement un <span class="inline-code">client_id</span> et un <span class="inline-code">client_secret</span>.
+      </div>
+
+      <h3>Scopes disponibles</h3>
+      <table>
+        <thead><tr><th>Scope</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td class="field-name">api</td><td>Accès général à l'API (tous les endpoints)</td></tr>
+          <tr><td class="field-name">user</td><td>Accès aux informations de l'utilisateur connecté</td></tr>
+          <tr><td class="field-name">email</td><td>Accès à l'email par défaut de l'utilisateur</td></tr>
+          <tr><td class="field-name">graphql</td><td>Accès à l'endpoint GraphQL</td></tr>
+          <tr><td class="field-name">inventory</td><td>Soumission d'inventaire (Client Credentials uniquement)</td></tr>
+          <tr><td class="field-name">status</td><td>Accès aux endpoints de statut</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Grant type : Password (recommandé pour scripts)</h3>
+      <div class="code-label">bash — Obtenir un access_token</div>
+      <pre>curl -X POST \
+  -H <span class="string">'Content-Type: application/json'</span> \
+  -d <span class="string">'{"grant_type":"password","client_id":"votre_client_id","client_secret":"votre_secret","username":"admin","password":"motdepasse","scope":"api"}'</span> \
+  <span class="url">'https://glpi.mondomaine.fr/api.php/token'</span>
+
+<span class="comment"># Réponse 200</span>
+{
+  <span class="key">"token_type"</span>: <span class="string">"Bearer"</span>,
+  <span class="key">"expires_in"</span>: <span class="number">3600</span>,
+  <span class="key">"access_token"</span>: <span class="string">"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9..."</span>,
+  <span class="key">"refresh_token"</span>: <span class="string">"def50200..."</span>
+}</pre>
+
+      <h3>Utiliser l'access_token</h3>
+      <div class="code-label">bash — Requête avec Bearer token</div>
+      <pre>curl -X GET \
+  -H <span class="string">'Content-Type: application/json'</span> \
+  -H <span class="header">"Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9..."</span> \
+  <span class="url">'https://glpi.mondomaine.fr/api.php/v2/Ticket'</span></pre>
+
+      <h3>Grant type : Authorization Code (apps utilisateur)</h3>
+      <div class="code-label">http — Flux Authorization Code</div>
+      <pre><span class="comment"># Étape 1 : Rediriger l'utilisateur vers</span>
+GET /api.php/authorize?response_type=code&amp;client_id=CLIENT_ID&amp;scope=api
+
+<span class="comment"># Étape 2 : Récupérer le code retourné puis l'échanger</span>
+POST /api.php/token
+{
+  <span class="key">"grant_type"</span>: <span class="string">"authorization_code"</span>,
+  <span class="key">"client_id"</span>: <span class="string">"CLIENT_ID"</span>,
+  <span class="key">"client_secret"</span>: <span class="string">"CLIENT_SECRET"</span>,
+  <span class="key">"code"</span>: <span class="string">"CODE_REÇU"</span>
+}</pre>
+    </section>
+
+    <!-- 3. ENDPOINTS SESSION -->
+    <section id="endpoints-session">
+      <div class="section-title"><span class="num">04</span> Endpoints Session & Profil (v1)</div>
+
+      <div class="endpoint-block">
+        <div class="endpoint-header" onclick="toggleEndpoint(this)">
+          <span class="method-badge m-get">GET</span>
+          <span class="endpoint-url"><span class="base">apirest.php/</span><span class="path">initSession</span></span>
+          <span class="endpoint-desc">Créer une session</span>
+          <span class="chevron open">▼</span>
+        </div>
+        <div class="collapsible endpoint-body">
+          <table><thead><tr><th>Paramètre</th><th>Type</th><th>Emplacement</th><th>Statut</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td class="field-name">Authorization</td><td class="field-type">string</td><td>Header</td><td><span class="required-badge">Requis</span></td><td>Basic base64(login:pass) OU user_token TOKEN</td></tr>
+            <tr><td class="field-name">App-Token</td><td class="field-type">string</td><td>Header</td><td><span class="optional-badge">Optionnel</span></td><td>Token du client API</td></tr>
+            <tr><td class="field-name">get_full_session</td><td class="field-type">bool</td><td>Query</td><td><span class="optional-badge">Optionnel</span></td><td>Retourner toute la session PHP</td></tr>
+          </tbody></table>
+          <p><strong>Retourne :</strong> <span class="inline-code">200</span> + <span class="inline-code">session_token</span> | <span class="inline-code">401</span> non autorisé</p>
+        </div>
+      </div>
+
+      <div class="endpoint-block">
+        <div class="endpoint-header" onclick="toggleEndpoint(this)">
+          <span class="method-badge m-get">GET</span>
+          <span class="endpoint-url"><span class="base">apirest.php/</span><span class="path">killSession</span></span>
+          <span class="endpoint-desc">Détruire la session</span>
+          <span class="chevron open">▼</span>
+        </div>
+        <div class="collapsible endpoint-body">
+          <p>Détruit la session identifiée par le Session-Token. Headers: <span class="inline-code">Session-Token</span> (obligatoire).</p>
+          <p><strong>Retourne :</strong> <span class="inline-code">200</span> OK</p>
+        </div>
+      </div>
+
+      <div class="endpoint-block">
+        <div class="endpoint-header" onclick="toggleEndpoint(this)">
+          <span class="method-badge m-get">GET</span>
+          <span class="endpoint-url"><span class="base">apirest.php/</span><span class="path">getMyProfiles</span></span>
+          <span class="endpoint-desc">Profils de l'utilisateur</span>
+          <span class="chevron">▼</span>
+        </div>
+        <div class="collapsible collapsed endpoint-body">
+          <p>Retourne tous les profils associés à l'utilisateur connecté avec leurs entités.</p>
+          <p><strong>Retourne :</strong> <span class="inline-code">200</span> + tableau <span class="inline-code">myprofiles[]</span> avec id, name, entities</p>
+        </div>
+      </div>
+
+      <div class="endpoint-block">
+        <div class="endpoint-header" onclick="toggleEndpoint(this)">
+          <span class="method-badge m-post">POST</span>
+          <span class="endpoint-url"><span class="base">apirest.php/</span><span class="path">changeActiveProfile</span></span>
+          <span class="endpoint-desc">Changer le profil actif</span>
+          <span class="chevron">▼</span>
+        </div>
+        <div class="collapsible collapsed endpoint-body">
+          <table><thead><tr><th>Champ JSON</th><th>Type</th><th>Statut</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td class="field-name">profiles_id</td><td class="field-type">int</td><td><span class="required-badge">Requis</span></td><td>ID du profil à activer</td></tr>
+          </tbody></table>
+        </div>
+      </div>
+
+      <div class="endpoint-block">
+        <div class="endpoint-header" onclick="toggleEndpoint(this)">
+          <span class="method-badge m-post">POST</span>
+          <span class="endpoint-url"><span class="base">apirest.php/</span><span class="path">changeActiveEntities</span></span>
+          <span class="endpoint-desc">Changer l'entité active</span>
+          <span class="chevron">▼</span>
+        </div>
+        <div class="collapsible collapsed endpoint-body">
+          <table><thead><tr><th>Champ JSON</th><th>Type</th><th>Statut</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td class="field-name">entities_id</td><td class="field-type">int|"all"</td><td><span class="optional-badge">Optionnel</span></td><td>ID de l'entité ("all" = toutes)</td></tr>
+            <tr><td class="field-name">is_recursive</td><td class="field-type">bool</td><td><span class="optional-badge">Optionnel</span></td><td>Inclure les sous-entités</td></tr>
+          </tbody></table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. ENDPOINTS CRUD GENERIQUE -->
+    <section id="endpoints-crud">
+      <div class="section-title"><span class="num">05</span> CRUD Générique — Tous les itemtypes</div>
+      <p>Ces endpoints s'appliquent à <strong>toute ressource GLPI</strong> (Ticket, Computer, User, etc.). Remplacer <span class="inline-code">:itemtype</span> par le nom de la classe (ex: <span class="inline-code">Ticket</span>, <span class="inline-code">Computer</span>).</p>
+
+      <div class="endpoint-block">
+        <div class="endpoint-header" onclick="toggleEndpoint(this)">
+          <span class="method-badge m-get">GET</span>
+          <span class="endpoint-url"><span class="base">apirest.php/</span><span class="param">:itemtype</span><span class="path">/</span><span class="param">:id</span></span>
+          <span class="endpoint-desc">Lire un élément</span>
+          <span class="chevron open">▼</span>
+        </div>
+        <div class="collapsible endpoint-body">
+          <table><thead><tr><th>Paramètre</th><th>Type</th><th>Statut</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td class="field-name">expand_dropdowns</td><td class="field-type">bool</td><td><span class="optional-badge">Optionnel</span></td><td>Afficher le label des dropdowns au lieu de l'ID</td></tr>
+            <tr><td class="field-name">get_hateoas</td><td class="field-type">bool</td><td><span class="optional-badge">Optionnel</span></td><td>Inclure les liens HATEOAS (défaut: true)</td></tr>
+            <tr><td class="field-name">with_tickets</td><td class="field-type">bool</td><td><span class="optional-badge">Optionnel</span></td><td>Inclure les tickets associés (Computer...)</td></tr>
+            <tr><td class="field-name">with_documents</td><td class="field-type">bool</td><td><span class="optional-badge">Optionnel</span></td><td>Inclure les documents liés</td></tr>
+            <tr><td class="field-name">with_networkports</td><td class="field-type">bool</td><td><span class="optional-badge">Optionnel</span></td><td>Inclure les ports réseau</td></tr>
+            <tr><td class="field-name">with_infocoms</td><td class="field-type">bool</td><td><span class="optional-badge">Optionnel</span></td><td>Informations financières</td></tr>
+            <tr><td class="field-name">with_contracts</td><td class="field-type">bool</td><td><span class="optional-badge">Optionnel</span></td><td>Contrats associés</td></tr>
+            <tr><td class="field-name">with_logs</td><td class="field-type">bool</td><td><span class="optional-badge">Optionnel</span></td><td>Historique des modifications</td></tr>
+            <tr><td class="field-name">add_keys_names</td><td class="field-type">array</td><td><span class="optional-badge">Optionnel</span></td><td>Noms lisibles pour les clés étrangères</td></tr>
+            <tr><td class="field-name">get_sha1</td><td class="field-type">bool</td><td><span class="optional-badge">Optionnel</span></td><td>Retourner un hash SHA1 au lieu des données</td></tr>
+          </tbody></table>
+          <p><strong>Retourne :</strong> <span class="inline-code">200</span> + objet JSON | <span class="inline-code">404</span> non trouvé | <span class="inline-code">401</span> non autorisé</p>
+        </div>
+      </div>
+
+      <div class="endpoint-block">
+        <div class="endpoint-header" onclick="toggleEndpoint(this)">
+          <span class="method-badge m-get">GET</span>
+          <span class="endpoint-url"><span class="base">apirest.php/</span><span class="param">:itemtype</span><span class="path">/</span></span>
+          <span class="endpoint-desc">Lister tous les éléments</span>
+          <span class="chevron open">▼</span>
+        </div>
+        <div class="collapsible endpoint-body">
+          <table><thead><tr><th>Paramètre</th><th>Type</th><th>Défaut</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td class="field-name">range</td><td class="field-type">string</td><td>0-49</td><td>Pagination ex: <span class="inline-code">50-99</span>, <span class="inline-code">150-199</span></td></tr>
+            <tr><td class="field-name">sort</td><td class="field-type">string</td><td>id</td><td>Nom du champ pour le tri</td></tr>
+            <tr><td class="field-name">order</td><td class="field-type">string</td><td>ASC</td><td>ASC ou DESC</td></tr>
+            <tr><td class="field-name">expand_dropdowns</td><td class="field-type">bool</td><td>false</td><td>Labels au lieu d'IDs</td></tr>
+            <tr><td class="field-name">only_id</td><td class="field-type">bool</td><td>false</td><td>Retourner uniquement les IDs</td></tr>
+            <tr><td class="field-name">is_deleted</td><td class="field-type">bool</td><td>false</td><td>Inclure les éléments supprimés</td></tr>
+            <tr><td class="field-name">searchText</td><td class="field-type">array</td><td>null</td><td>Filtre par champ ex: <span class="inline-code">searchText[name]=serveur</span></td></tr>
+          </tbody></table>
+          <p><strong>Headers de réponse :</strong> <span class="inline-code">Content-Range: 0-49/200</span> | <span class="inline-code">Accept-Range: Computer 990</span></p>
+          <p><strong>Retourne :</strong> <span class="inline-code">200</span> (tout) | <span class="inline-code">206</span> (partiel/paginé)</p>
+        </div>
+      </div>
+
+      <div class="endpoint-block">
+        <div class="endpoint-header" onclick="toggleEndpoint(this)">
+          <span class="method-badge m-get">GET</span>
+          <span class="endpoint-url"><span class="base">apirest.php/</span><span class="param">:itemtype</span><span class="path">/</span><span class="param">:id</span><span class="path">/</span><span class="param">:sub_itemtype</span></span>
+          <span class="endpoint-desc">Lire les sous-éléments</span>
+          <span class="chevron">▼</span>
+        </div>
+        <div class="collapsible collapsed endpoint-body">
+          <p>Retourne la collection d'un sous-type pour un élément parent. Exemple : tous les suivis d'un ticket.</p>
+          <div class="code-label">Exemple — Suivis d'un ticket</div>
+          <pre>GET /apirest.php/<span class="url">Ticket/42/ITILFollowup</span></pre>
+          <p>Supporte les mêmes paramètres que "Lister" (range, sort, order, expand_dropdowns...)</p>
+        </div>
+      </div>
+
+      <div class="endpoint-block">
+        <div class="endpoint-header" onclick="toggleEndpoint(this)">
+          <span class="method-badge m-post">POST</span>
+          <span class="endpoint-url"><span class="base">apirest.php/</span><span class="param">:itemtype</span><span class="path">/</span></span>
+          <span class="endpoint-desc">Créer un ou plusieurs éléments</span>
+          <span class="chevron open">▼</span>
+        </div>
+        <div class="collapsible endpoint-body">
+          <p>Créer un ou plusieurs éléments. Passer un objet unique ou un tableau d'objets dans le champ <span class="inline-code">input</span>.</p>
+          <div class="code-label">JSON — Création simple</div>
+          <pre>{ <span class="key">"input"</span>: { <span class="key">"name"</span>: <span class="string">"Mon ticket"</span>, <span class="key">"content"</span>: <span class="string">"Description"</span>, <span class="key">"type"</span>: <span class="number">1</span> } }</pre>
+          <div class="code-label">JSON — Création multiple</div>
+          <pre>{ <span class="key">"input"</span>: [
+  { <span class="key">"name"</span>: <span class="string">"Ticket 1"</span>, <span class="key">"content"</span>: <span class="string">"..."</span> },
+  { <span class="key">"name"</span>: <span class="string">"Ticket 2"</span>, <span class="key">"content"</span>: <span class="string">"..."</span> }
+]}</pre>
+          <p><strong>Retourne :</strong> <span class="inline-code">201</span> + id créé + header <span class="inline-code">Location</span> | <span class="inline-code">207</span> pour création multiple</p>
+        </div>
+      </div>
+
+      <div class="endpoint-block">
+        <div class="endpoint-header" onclick="toggleEndpoint(this)">
+          <span class="method-badge m-put">PUT</span>
+          <span class="endpoint-url"><span class="base">apirest.php/</span><span class="param">:itemtype</span><span class="path">/</span><span class="param">:id</span></span>
+          <span class="endpoint-desc">Mettre à jour un élément</span>
+          <span class="chevron">▼</span>
+        </div>
+        <div class="collapsible collapsed endpoint-body">
+          <p>Mise à jour complète ou partielle (GLPI traite PUT comme une mise à jour des champs fournis). Passer les champs à modifier dans <span class="inline-code">input</span>. L'ID peut être dans l'URL ou dans le payload.</p>
+          <div class="code-label">JSON — Mise à jour</div>
+          <pre>{ <span class="key">"input"</span>: { <span class="key">"id"</span>: <span class="number">42</span>, <span class="key">"status"</span>: <span class="number">2</span>, <span class="key">"priority"</span>: <span class="number">3</span> } }</pre>
+          <p><strong>Retourne :</strong> <span class="inline-code">200</span> + tableau de résultats | <span class="inline-code">207</span> pour mise à jour multiple</p>
+        </div>
+      </div>
+
+      <div class="endpoint-block">
+        <div class="endpoint-header" onclick="toggleEndpoint(this)">
+          <span class="method-badge m-delete">DEL</span>
+          <span class="endpoint-url"><span class="base">apirest.php/</span><span class="param">:itemtype</span><span class="path">/</span><span class="param">:id</span></span>
+          <span class="endpoint-desc">Supprimer un élément</span>
+          <span class="chevron">▼</span>
+        </div>
+        <div class="collapsible collapsed endpoint-body">
+          <table><thead><tr><th>Paramètre</th><th>Type</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td class="field-name">force_purge</td><td class="field-type">bool</td><td>Suppression définitive (sans corbeille). Défaut: false</td></tr>
+            <tr><td class="field-name">history</td><td class="field-type">bool</td><td>Conserver l'historique. Défaut: true</td></tr>
+          </tbody></table>
+          <p><strong>Retourne :</strong> <span class="inline-code">200</span> OK | <span class="inline-code">204</span> No Content</p>
+          <div class="alert alert-warn">Sans <span class="inline-code">force_purge=true</span>, l'élément est placé dans la corbeille GLPI, pas supprimé définitivement.</div>
+        </div>
+      </div>
+
+      <div class="endpoint-block">
+        <div class="endpoint-header" onclick="toggleEndpoint(this)">
+          <span class="method-badge m-get">GET</span>
+          <span class="endpoint-url"><span class="base">apirest.php/</span><span class="path">getMultipleItems</span></span>
+          <span class="endpoint-desc">Lire plusieurs types en une requête</span>
+          <span class="chevron">▼</span>
+        </div>
+        <div class="collapsible collapsed endpoint-body">
+          <p>Permet de récupérer des éléments de types différents en une seule requête API.</p>
+          <div class="code-label">URL — Exemple multi-types</div>
+          <pre>GET /apirest.php/getMultipleItems?<span class="url">items[0][itemtype]=Ticket&amp;items[0][items_id]=42&amp;items[1][itemtype]=User&amp;items[1][items_id]=5</span></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. SCHEMA TICKET -->
+    <section id="endpoints-ticket">
+      <div class="section-title"><span class="num">06</span> Ressource Ticket</div>
+
+      <div id="ticket-schema">
+        <h3>Schéma JSON — Ticket</h3>
+        <div class="tabs">
+          <button class="tab-btn active" onclick="switchTab(this,'t-write')">Écriture (POST/PUT)</button>
+          <button class="tab-btn" onclick="switchTab(this,'t-read')">Lecture (GET)</button>
+        </div>
+        <div id="t-write" class="tab-content active">
+          <table><thead><tr><th>Champ</th><th>Type</th><th>Statut</th><th>Valeurs / Notes</th></tr></thead>
+          <tbody>
+            <tr><td class="field-name">name</td><td class="field-type">string</td><td><span class="required-badge">Requis</span></td><td>Titre du ticket</td></tr>
+            <tr><td class="field-name">content</td><td class="field-type">string</td><td><span class="required-badge">Requis</span></td><td>Description (HTML accepté)</td></tr>
+            <tr><td class="field-name">type</td><td class="field-type">int</td><td><span class="optional-badge">Optionnel</span></td><td>1=Incident, 2=Demande</td></tr>
+            <tr><td class="field-name">status</td><td class="field-type">int</td><td><span class="optional-badge">Optionnel</span></td><td>1=Nouveau, 2=En cours (assigné), 3=En cours (planifié), 4=En attente, 5=Résolu, 6=Clos</td></tr>
+            <tr><td class="field-name">priority</td><td class="field-type">int</td><td><span class="optional-badge">Optionnel</span></td><td>1=Très basse, 2=Basse, 3=Moyenne, 4=Haute, 5=Très haute, 6=Majeure</td></tr>
+            <tr><td class="field-name">urgency</td><td class="field-type">int</td><td><span class="optional-badge">Optionnel</span></td><td>1-5 (même échelle que priority)</td></tr>
+            <tr><td class="field-name">impact</td><td class="field-type">int</td><td><span class="optional-badge">Optionnel</span></td><td>1-5 (même échelle que priority)</td></tr>
+            <tr><td class="field-name">itilcategories_id</td><td class="field-type">int</td><td><span class="optional-badge">Optionnel</span></td><td>ID de la catégorie ITIL</td></tr>
+            <tr><td class="field-name">entities_id</td><td class="field-type">int</td><td><span class="optional-badge">Optionnel</span></td><td>ID de l'entité GLPI</td></tr>
+            <tr><td class="field-name">users_id_recipient</td><td class="field-type">int</td><td><span class="optional-badge">Optionnel</span></td><td>ID de l'utilisateur demandeur</td></tr>
+            <tr><td class="field-name">_users_id_assign</td><td class="field-type">int|array</td><td><span class="optional-badge">Optionnel</span></td><td>ID(s) technicien(s) assigné(s)</td></tr>
+            <tr><td class="field-name">_groups_id_assign</td><td class="field-type">int</td><td><span class="optional-badge">Optionnel</span></td><td>ID groupe technicien assigné</td></tr>
+            <tr><td class="field-name">_users_id_requester</td><td class="field-type">int|array</td><td><span class="optional-badge">Optionnel</span></td><td>ID(s) demandeur(s)</td></tr>
+            <tr><td class="field-name">requesttypes_id</td><td class="field-type">int</td><td><span class="optional-badge">Optionnel</span></td><td>Type de demande (email, téléphone...)</td></tr>
+            <tr><td class="field-name">locations_id</td><td class="field-type">int</td><td><span class="optional-badge">Optionnel</span></td><td>ID de la localisation</td></tr>
+            <tr><td class="field-name">time_to_resolve</td><td class="field-type">datetime</td><td><span class="optional-badge">Optionnel</span></td><td>Échéance de résolution (YYYY-MM-DD HH:MM:SS)</td></tr>
+            <tr><td class="field-name">slas_id_ttr</td><td class="field-type">int</td><td><span class="optional-badge">Optionnel</span></td><td>ID SLA temps de résolution</td></tr>
+          </tbody></table>
+        </div>
+        <div id="t-read" class="tab-content">
+          <table><thead><tr><th>Champ</th><th>Type</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td class="field-name">id</td><td class="field-type">int</td><td>Identifiant unique du ticket</td></tr>
+            <tr><td class="field-name">entities_id</td><td class="field-type">int</td><td>ID de l'entité</td></tr>
+            <tr><td class="field-name">name</td><td class="field-type">string</td><td>Titre</td></tr>
+            <tr><td class="field-name">date</td><td class="field-type">datetime</td><td>Date de création</td></tr>
+            <tr><td class="field-name">date_mod</td><td class="field-type">datetime</td><td>Date de dernière modification</td></tr>
+            <tr><td class="field-name">closedate</td><td class="field-type">datetime</td><td>Date de clôture</td></tr>
+            <tr><td class="field-name">solvedate</td><td class="field-type">datetime</td><td>Date de résolution</td></tr>
+            <tr><td class="field-name">status</td><td class="field-type">int</td><td>Statut (1-6)</td></tr>
+            <tr><td class="field-name">type</td><td class="field-type">int</td><td>1=Incident, 2=Demande</td></tr>
+            <tr><td class="field-name">content</td><td class="field-type">string</td><td>Description (HTML)</td></tr>
+            <tr><td class="field-name">priority</td><td class="field-type">int</td><td>Priorité (1-6)</td></tr>
+            <tr><td class="field-name">urgency</td><td class="field-type">int</td><td>Urgence (1-5)</td></tr>
+            <tr><td class="field-name">impact</td><td class="field-type">int</td><td>Impact (1-5)</td></tr>
+            <tr><td class="field-name">itilcategories_id</td><td class="field-type">int</td><td>ID catégorie ITIL</td></tr>
+            <tr><td class="field-name">users_id_lastupdater</td><td class="field-type">int</td><td>Dernier modificateur</td></tr>
+            <tr><td class="field-name">actiontime</td><td class="field-type">int</td><td>Temps d'action en secondes</td></tr>
+            <tr><td class="field-name">time_to_resolve</td><td class="field-type">datetime</td><td>Échéance SLA</td></tr>
+            <tr><td class="field-name">is_deleted</td><td class="field-type">bool</td><td>En corbeille</td></tr>
+            <tr><td class="field-name">links</td><td class="field-type">array</td><td>Liens HATEOAS vers ressources associées</td></tr>
+          </tbody></table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. SCHEMA COMPUTER -->
+    <section id="endpoints-computer">
+      <div class="section-title"><span class="num">07</span> Ressource Computer</div>
+      <div id="computer-schema">
+        <h3>Schéma JSON — Computer</h3>
+        <table><thead><tr><th>Champ</th><th>Type</th><th>Statut</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td class="field-name">name</td><td class="field-type">string</td><td><span class="required-badge">Requis</span></td><td>Nom de la machine</td></tr>
+          <tr><td class="field-name">serial</td><td class="field-type">string</td><td><span class="optional-badge">Optionnel</span></td><td>Numéro de série</td></tr>
+          <tr><td class="field-name">otherserial</td><td class="field-type">string</td><td><span class="optional-badge">Optionnel</span></td><td>Numéro de parc / inventaire</td></tr>
+          <tr><td class="field-name">entities_id</td><td class="field-type">int</td><td><span class="optional-badge">Optionnel</span></td><td>ID de l'entité</td></tr>
+          <tr><td class="field-name">locations_id</td><td class="field-type">int</td><td><span class="optional-badge">Optionnel</span></td><td>ID de la localisation</td></tr>
+          <tr><td class="field-name">computermodels_id</td><td class="field-type">int</td><td><span class="optional-badge">Optionnel</span></td><td>ID du modèle</td></tr>
+          <tr><td class="field-name">computertypes_id</td><td class="field-type">int</td><td><span class="optional-badge">Optionnel</span></td><td>ID du type (Desktop, Notebook...)</td></tr>
+          <tr><td class="field-name">manufacturers_id</td><td class="field-type">int</td><td><span class="optional-badge">Optionnel</span></td><td>ID du fabricant</td></tr>
+          <tr><td class="field-name">states_id</td><td class="field-type">int</td><td><span class="optional-badge">Optionnel</span></td><td>ID de l'état (Production, Hors service...)</td></tr>
+          <tr><td class="field-name">users_id</td><td class="field-type">int</td><td><span class="optional-badge">Optionnel</span></td><td>Utilisateur propriétaire</td></tr>
+          <tr><td class="field-name">groups_id</td><td class="field-type">int</td><td><span class="optional-badge">Optionnel</span></td><td>Groupe propriétaire</td></tr>
+          <tr><td class="field-name">users_id_tech</td><td class="field-type">int</td><td><span class="optional-badge">Optionnel</span></td><td>Technicien responsable</td></tr>
+          <tr><td class="field-name">contact</td><td class="field-type">string</td><td><span class="optional-badge">Optionnel</span></td><td>Contact alternatif</td></tr>
+          <tr><td class="field-name">comment</td><td class="field-type">string</td><td><span class="optional-badge">Optionnel</span></td><td>Commentaire libre</td></tr>
+          <tr><td class="field-name">uuid</td><td class="field-type">string</td><td><span class="optional-badge">Optionnel</span></td><td>UUID de la machine</td></tr>
+          <tr><td class="field-name">is_dynamic</td><td class="field-type">bool</td><td>Lecture seule</td><td>Géré par agent (FusionInventory/GLPI Agent)</td></tr>
+        </tbody></table>
+
+        <h4>Paramètres de lecture enrichie (GET)</h4>
+        <ul>
+          <li><span class="inline-code">with_devices</span> — Composants matériels (CPU, RAM, disques...)</li>
+          <li><span class="inline-code">with_disks</span> — Systèmes de fichiers</li>
+          <li><span class="inline-code">with_softwares</span> — Logiciels installés</li>
+          <li><span class="inline-code">with_connections</span> — Connexions directes (périphériques, imprimantes)</li>
+          <li><span class="inline-code">with_networkports</span> — Ports et connexions réseau</li>
+          <li><span class="inline-code">with_infocoms</span> — Informations financières</li>
+          <li><span class="inline-code">with_tickets</span> — Tickets associés</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 7. SCHEMA USER -->
+    <section id="endpoints-user">
+      <div class="section-title"><span class="num">08</span> Ressource User</div>
+      <div id="user-schema">
+        <h3>Schéma JSON — User</h3>
+        <table><thead><tr><th>Champ</th><th>Type</th><th>Statut</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td class="field-name">name</td><td class="field-type">string</td><td><span class="required-badge">Requis</span></td><td>Login de l'utilisateur</td></tr>
+          <tr><td class="field-name">password</td><td class="field-type">string</td><td><span class="required-badge">Requis (création)</span></td><td>Mot de passe (haché par GLPI)</td></tr>
+          <tr><td class="field-name">realname</td><td class="field-type">string</td><td><span class="optional-badge">Optionnel</span></td><td>Nom de famille</td></tr>
+          <tr><td class="field-name">firstname</td><td class="field-type">string</td><td><span class="optional-badge">Optionnel</span></td><td>Prénom</td></tr>
+          <tr><td class="field-name">email</td><td class="field-type">string</td><td><span class="optional-badge">Optionnel</span></td><td>Email principal (via UserEmail)</td></tr>
+          <tr><td class="field-name">phone</td><td class="field-type">string</td><td><span class="optional-badge">Optionnel</span></td><td>Téléphone</td></tr>
+          <tr><td class="field-name">phone2</td><td class="field-type">string</td><td><span class="optional-badge">Optionnel</span></td><td>Téléphone secondaire</td></tr>
+          <tr><td class="field-name">mobile</td><td class="field-type">string</td><td><span class="optional-badge">Optionnel</span></td><td>Mobile</td></tr>
+          <tr><td class="field-name">profiles_id</td><td class="field-type">int</td><td><span class="optional-badge">Optionnel</span></td><td>Profil par défaut</td></tr>
+          <tr><td class="field-name">entities_id</td><td class="field-type">int</td><td><span class="optional-badge">Optionnel</span></td><td>Entité par défaut</td></tr>
+          <tr><td class="field-name">is_active</td><td class="field-type">bool</td><td><span class="optional-badge">Optionnel</span></td><td>Compte actif</td></tr>
+          <tr><td class="field-name">language</td><td class="field-type">string</td><td><span class="optional-badge">Optionnel</span></td><td>Langue (fr_FR, en_GB...)</td></tr>
+          <tr><td class="field-name">usertitles_id</td><td class="field-type">int</td><td><span class="optional-badge">Optionnel</span></td><td>Titre (M., Mme...)</td></tr>
+          <tr><td class="field-name">locations_id</td><td class="field-type">int</td><td><span class="optional-badge">Optionnel</span></td><td>Localisation</td></tr>
+          <tr><td class="field-name">begin_date</td><td class="field-type">date</td><td><span class="optional-badge">Optionnel</span></td><td>Date de début de validité</td></tr>
+          <tr><td class="field-name">end_date</td><td class="field-type">date</td><td><span class="optional-badge">Optionnel</span></td><td>Date de fin de validité</td></tr>
+        </tbody></table>
+      </div>
+    </section>
+
+    <!-- 8. PAGINATION -->
+    <section id="pagination">
+      <div class="section-title"><span class="num">09</span> Pagination, Tri & Filtrage</div>
+      
+      <h3>Pagination</h3>
+      <p>L'API v1 utilise un paramètre <span class="inline-code">range</span> de type <span class="inline-code">début-fin</span>. Par défaut : <span class="inline-code">0-49</span> (50 éléments).</p>
+      <div class="code-label">Exemples de pagination</div>
+      <pre><span class="comment"># Page 1 (éléments 0 à 49)</span>
+GET /apirest.php/Ticket/?range=0-49
+
+<span class="comment"># Page 2 (éléments 50 à 99)</span>
+GET /apirest.php/Ticket/?range=50-99
+
+<span class="comment"># Éléments 200 à 249</span>
+GET /apirest.php/Ticket/?range=200-249</pre>
+
+      <p>Les headers de réponse indiquent la plage et le total :</p>
+      <pre><span class="comment">Content-Range: 0-49/523</span>   <span class="comment"># 523 tickets au total</span>
+<span class="comment">Accept-Range: Ticket 1000</span>   <span class="comment"># max 1000 par requête</span></pre>
+
+      <h3>Tri</h3>
+      <table><thead><tr><th>Paramètre</th><th>Type</th><th>Défaut</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="field-name">sort</td><td class="field-type">string</td><td>id</td><td>Nom du champ de tri (ex: <span class="inline-code">name</span>, <span class="inline-code">date_mod</span>, <span class="inline-code">status</span>)</td></tr>
+        <tr><td class="field-name">order</td><td class="field-type">string</td><td>ASC</td><td><span class="inline-code">ASC</span> ou <span class="inline-code">DESC</span></td></tr>
+      </tbody></table>
+
+      <h3>Filtrage textuel (v1)</h3>
+      <div class="code-label">URL — searchText</div>
+      <pre>GET /apirest.php/Ticket/?searchText[name]=serveur&amp;searchText[status]=1</pre>
+
+      <div class="alert alert-info">Pour une recherche avancée multi-critères, utiliser l'endpoint <span class="inline-code">/search/:itemtype</span> décrit dans la section suivante.</div>
+    </section>
+
+    <!-- 9. SEARCH API -->
+    <section id="search">
+      <div class="section-title"><span class="num">10</span> Search API (v1)</div>
+      
+      <p>L'endpoint <span class="inline-code">GET /apirest.php/search/:itemtype</span> offre une recherche multi-critères basée sur les <em>searchOptions</em> de chaque type.</p>
+
+      <h3>Obtenir les searchOptions d'un type</h3>
+      <div class="code-label">bash — Lister les searchOptions de Ticket</div>
+      <pre>curl -X GET \
+  -H <span class="header">"Session-Token: ..."</span> \
+  <span class="url">'https://glpi.mondomaine.fr/apirest.php/listSearchOptions/Ticket'</span>
+
+<span class="comment"># Exemple de réponse (extrait)</span>
+{
+  <span class="key">"1"</span>: { <span class="key">"name"</span>: <span class="string">"ID"</span>,       <span class="key">"table"</span>: <span class="string">"glpi_tickets"</span>, <span class="key">"field"</span>: <span class="string">"id"</span> },
+  <span class="key">"2"</span>: { <span class="key">"name"</span>: <span class="string">"Titre"</span>,    <span class="key">"table"</span>: <span class="string">"glpi_tickets"</span>, <span class="key">"field"</span>: <span class="string">"name"</span> },
+  <span class="key">"12"</span>: { <span class="key">"name"</span>: <span class="string">"Statut"</span>,  <span class="key">"table"</span>: <span class="string">"glpi_tickets"</span>, <span class="key">"field"</span>: <span class="string">"status"</span> },
+  <span class="key">"3"</span>: { <span class="key">"name"</span>: <span class="string">"Date"</span>,     <span class="key">"table"</span>: <span class="string">"glpi_tickets"</span>, <span class="key">"field"</span>: <span class="string">"date"</span> },
+  ...
+}</pre>
+
+      <h3>Construction des critères</h3>
+      <table><thead><tr><th>Paramètre</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="field-name">criteria[n][field]</td><td>ID du searchOption (ex: 12 pour Status)</td></tr>
+        <tr><td class="field-name">criteria[n][searchtype]</td><td>contains, equals, notequals, lessthan, morethan, under, notunder, regex, empty</td></tr>
+        <tr><td class="field-name">criteria[n][value]</td><td>Valeur à rechercher</td></tr>
+        <tr><td class="field-name">criteria[n][link]</td><td>AND / OR (opérateur logique entre critères)</td></tr>
+        <tr><td class="field-name">criteria[n][itemtype]</td><td>Type de l'item (si différent du type principal)</td></tr>
+        <tr><td class="field-name">forcedisplay[n]</td><td>IDs des colonnes à forcer dans le résultat</td></tr>
+        <tr><td class="field-name">range</td><td>Pagination (ex: 0-49)</td></tr>
+        <tr><td class="field-name">sort</td><td>ID du searchOption pour le tri</td></tr>
+        <tr><td class="field-name">order</td><td>ASC ou DESC</td></tr>
+        <tr><td class="field-name">uid_cols</td><td>Utiliser des noms de colonnes complets</td></tr>
+        <tr><td class="field-name">giveItems</td><td>Retourner les données complètes des items</td></tr>
+      </tbody></table>
+
+      <h3>Opérateurs de recherche</h3>
+      <table><thead><tr><th>Opérateur</th><th>Description</th><th>Note</th></tr></thead>
+      <tbody>
+        <tr><td class="field-name">contains</td><td>Contient (LIKE %val%)</td><td>Préfixe ^ = commence par, suffixe $ = finit par</td></tr>
+        <tr><td class="field-name">equals</td><td>Égal (pour dropdowns)</td><td>Utiliser pour les IDs de dropdowns</td></tr>
+        <tr><td class="field-name">notequals</td><td>Différent de</td><td></td></tr>
+        <tr><td class="field-name">lessthan</td><td>Inférieur à</td><td>Dates et nombres</td></tr>
+        <tr><td class="field-name">morethan</td><td>Supérieur à</td><td>Dates et nombres</td></tr>
+        <tr><td class="field-name">under</td><td>Sous (hiérarchie)</td><td>Entités, catégories</td></tr>
+        <tr><td class="field-name">notunder</td><td>Pas sous (hiérarchie)</td><td></td></tr>
+        <tr><td class="field-name">regex</td><td>Expression régulière</td><td></td></tr>
+        <tr><td class="field-name">empty</td><td>Vide / NULL</td><td></td></tr>
+      </tbody></table>
+
+      <h3>Exemple — Recherche avancée</h3>
+      <div class="code-label">bash — Tickets ouverts avec priorité haute</div>
+      <pre>curl -g -X GET \
+  -H <span class="header">"Session-Token: ..."</span> \
+  -H <span class="header">"App-Token: ..."</span> \
+  '<span class="url">https://glpi.mondomaine.fr/apirest.php/search/Ticket?\
+criteria[0][field]=12&amp;\
+criteria[0][searchtype]=equals&amp;\
+criteria[0][value]=1&amp;\
+criteria[0][link]=AND&amp;\
+criteria[1][field]=3&amp;\
+criteria[1][searchtype]=morethan&amp;\
+criteria[1][value]=4&amp;\
+criteria[1][link]=AND&amp;\
+forcedisplay[0]=1&amp;\
+forcedisplay[1]=2&amp;\
+forcedisplay[2]=12&amp;\
+range=0-29</span>'
+
+<span class="comment"># Réponse</span>
+{
+  <span class="key">"totalcount"</span>: <span class="number">15</span>,
+  <span class="key">"count"</span>: <span class="number">15</span>,
+  <span class="key">"data"</span>: {
+    <span class="key">"7"</span>: { <span class="key">"1"</span>: <span class="number">7</span>, <span class="key">"2"</span>: <span class="string">"Panne réseau"</span>, <span class="key">"12"</span>: <span class="number">1</span> },
+    ...
+  }
+}</pre>
+    </section>
+
+    <!-- 10. RSQL -->
+    <section id="rsql">
+      <div class="section-title"><span class="num">11</span> Filtrage RSQL — API v2</div>
+      
+      <p>L'API v2 utilise RSQL (<em>REST Query Language</em>), un sur-ensemble de FIQL, via le paramètre <span class="inline-code">filter</span>. Bien plus lisible que les critères v1.</p>
+      <p>Syntaxe : <span class="inline-code">field&lt;opérateur&gt;value</span>. Combiner avec <span class="inline-code">;</span> (AND) ou <span class="inline-code">,</span> (OR).</p>
+
+      <div class="rsql-table">
+        <table><thead><tr><th>Opérateur</th><th>Signification</th><th class="example">Exemple</th></tr></thead>
+        <tbody>
+          <tr><td class="field-name">==</td><td>Égal à</td><td class="example">name==Jean</td></tr>
+          <tr><td class="field-name">!=</td><td>Différent de</td><td class="example">status!=6</td></tr>
+          <tr><td class="field-name">=in=</td><td>Dans la liste</td><td class="example">status=in=(1,2,3)</td></tr>
+          <tr><td class="field-name">=out=</td><td>Hors de la liste</td><td class="example">status=out=(5,6)</td></tr>
+          <tr><td class="field-name">=lt=</td><td>Inférieur à</td><td class="example">priority=lt=3</td></tr>
+          <tr><td class="field-name">=le=</td><td>Inférieur ou égal</td><td class="example">priority=le=3</td></tr>
+          <tr><td class="field-name">=gt=</td><td>Supérieur à</td><td class="example">priority=gt=3</td></tr>
+          <tr><td class="field-name">=ge=</td><td>Supérieur ou égal</td><td class="example">priority=ge=4</td></tr>
+          <tr><td class="field-name">=like=</td><td>Contient (sensible)</td><td class="example">name=like=serveur</td></tr>
+          <tr><td class="field-name">=ilike=</td><td>Contient (insensible)</td><td class="example">name=ilike=SERVEUR</td></tr>
+          <tr><td class="field-name">=isnull=</td><td>Est NULL</td><td class="example">closedate=isnull=</td></tr>
+          <tr><td class="field-name">=isnotnull=</td><td>N'est pas NULL</td><td class="example">closedate=isnotnull=</td></tr>
+        </tbody></table>
+      </div>
+
+      <div class="code-label">URL — Tickets ouverts et priorité haute en v2</div>
+      <pre>GET /api.php/v2/Ticket?<span class="url">filter=status=in=(1,2,3);priority=ge=4</span>&amp;sort=date&amp;order=DESC&amp;limit=20&amp;offset=0</pre>
+
+      <div class="code-label">URL — Combinaison AND/OR</div>
+      <pre><span class="comment"># AND avec ;</span>
+filter=status==1;priority=ge=4
+
+<span class="comment"># OR avec ,</span>
+filter=status==5,status==6
+
+<span class="comment"># Groupement</span>
+filter=(status==1,status==2);priority=ge=3</pre>
+    </section>
+
+    <!-- 11. EXEMPLES CONCRETS -->
+    <section id="examples">
+      <div class="section-title"><span class="num">12</span> Exemples concrets</div>
+
+      <h3>GET — Liste des tickets ouverts (v1)</h3>
+      <div class="code-label">bash</div>
+      <pre>curl -X GET \
+  -H <span class="string">'Content-Type: application/json'</span> \
+  -H <span class="header">"Session-Token: 83af7e620c83a50a18d3eac2f6ed05a3ca0bea62"</span> \
+  -H <span class="header">"App-Token: f7g3csp8mgatg5ebc5elnazakw20i9fyev1qopya7"</span> \
+  <span class="url">'https://glpi.mondomaine.fr/apirest.php/Ticket/?range=0-49&amp;expand_dropdowns=true&amp;sort=date_mod&amp;order=DESC'</span>
+
+<span class="comment"># Réponse 206 Partial Content</span>
+<span class="comment"># Content-Range: 0-49/234</span>
+[
+  {
+    <span class="key">"id"</span>: <span class="number">523</span>,
+    <span class="key">"entities_id"</span>: <span class="string">"Root Entity"</span>,
+    <span class="key">"name"</span>: <span class="string">"Panne réseau bureau 3"</span>,
+    <span class="key">"date"</span>: <span class="string">"2025-10-15 09:23:11"</span>,
+    <span class="key">"status"</span>: <span class="number">1</span>,
+    <span class="key">"type"</span>: <span class="number">1</span>,
+    <span class="key">"priority"</span>: <span class="number">4</span>,
+    <span class="key">"itilcategories_id"</span>: <span class="string">"Réseau"</span>,
+    ...
+  }
+]</pre>
+
+      <h3>GET — Ticket par ID avec expand (v1)</h3>
+      <div class="code-label">bash</div>
+      <pre>curl -X GET \
+  -H <span class="header">"Session-Token: 83af7e620c83a50a18d3eac2f6ed05a3ca0bea62"</span> \
+  <span class="url">'https://glpi.mondomaine.fr/apirest.php/Ticket/523?expand_dropdowns=true&amp;with_logs=true'</span>
+
+<span class="comment"># Réponse 200 OK</span>
+{
+  <span class="key">"id"</span>: <span class="number">523</span>,
+  <span class="key">"name"</span>: <span class="string">"Panne réseau bureau 3"</span>,
+  <span class="key">"content"</span>: <span class="string">"&lt;p&gt;Les postes du bureau 3 n'ont plus accès à internet...&lt;/p&gt;"</span>,
+  <span class="key">"status"</span>: <span class="string">"Nouveau"</span>,
+  <span class="key">"type"</span>: <span class="string">"Incident"</span>,
+  <span class="key">"priority"</span>: <span class="string">"Haute"</span>,
+  <span class="key">"date"</span>: <span class="string">"2025-10-15 09:23:11"</span>,
+  <span class="key">"itilcategories_id"</span>: <span class="string">"Réseau &gt; LAN"</span>,
+  <span class="key">"links"</span>: [
+    { <span class="key">"rel"</span>: <span class="string">"Entity"</span>,        <span class="key">"href"</span>: <span class="string">"...apirest.php/Entity/1"</span> },
+    { <span class="key">"rel"</span>: <span class="string">"ITILCategory"</span>, <span class="key">"href"</span>: <span class="string">"...apirest.php/ITILCategory/5"</span> }
+  ]
+}</pre>
+
+      <h3>POST — Créer un ticket (v1)</h3>
+      <div class="code-label">bash</div>
+      <pre>curl -X POST \
+  -H <span class="string">'Content-Type: application/json'</span> \
+  -H <span class="header">"Session-Token: 83af7e620c83a50a18d3eac2f6ed05a3ca0bea62"</span> \
+  -d <span class="string">'{
+    "input": {
+      "name": "Imprimante hors service - RDC",
+      "content": "&lt;p&gt;L&apos;imprimante du rez-de-chaussée ne répond plus depuis ce matin.&lt;/p&gt;",
+      "type": 1,
+      "status": 1,
+      "priority": 3,
+      "urgency": 3,
+      "impact": 2,
+      "itilcategories_id": 8,
+      "entities_id": 1,
+      "_users_id_requester": 27,
+      "_users_id_assign": 15,
+      "requesttypes_id": 2
+    }
+  }'</span> \
+  <span class="url">'https://glpi.mondomaine.fr/apirest.php/Ticket/'</span>
+
+<span class="comment"># Réponse 201 Created</span>
+<span class="comment"># Location: https://glpi.mondomaine.fr/apirest.php/Ticket/524</span>
+{
+  <span class="key">"id"</span>: <span class="number">524</span>,
+  <span class="key">"message"</span>: <span class="string">"Item successfully added"</span>
+}</pre>
+
+      <h3>PUT — Mettre à jour un ticket (v1)</h3>
+      <div class="code-label">bash</div>
+      <pre>curl -X PUT \
+  -H <span class="string">'Content-Type: application/json'</span> \
+  -H <span class="header">"Session-Token: 83af7e620c83a50a18d3eac2f6ed05a3ca0bea62"</span> \
+  -d <span class="string">'{
+    "input": {
+      "id": 524,
+      "status": 5,
+      "priority": 2,
+      "_users_id_assign": 18
+    }
+  }'</span> \
+  <span class="url">'https://glpi.mondomaine.fr/apirest.php/Ticket/524'</span>
+
+<span class="comment"># Réponse 200 OK</span>
+[{ <span class="key">"524"</span>: true, <span class="key">"message"</span>: <span class="string">""</span> }]</pre>
+
+      <h3>POST — Ajouter un suivi à un ticket (v1)</h3>
+      <div class="code-label">bash</div>
+      <pre>curl -X POST \
+  -H <span class="string">'Content-Type: application/json'</span> \
+  -H <span class="header">"Session-Token: 83af7e620c83a50a18d3eac2f6ed05a3ca0bea62"</span> \
+  -d <span class="string">'{
+    "input": {
+      "items_id": 524,
+      "itemtype": "Ticket",
+      "content": "Technicien en route. Arrivée prévue dans 30 min.",
+      "is_private": 0,
+      "requesttypes_id": 1
+    }
+  }'</span> \
+  <span class="url">'https://glpi.mondomaine.fr/apirest.php/ITILFollowup/'</span></pre>
+
+      <h3>GET — Tickets via l'API v2 avec RSQL</h3>
+      <div class="code-label">bash</div>
+      <pre>curl -X GET \
+  -H <span class="string">'Content-Type: application/json'</span> \
+  -H <span class="header">"Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGci..."</span> \
+  <span class="url">'https://glpi.mondomaine.fr/api.php/v2/Ticket?filter=status=in=(1,2);priority=ge=4&amp;sort=date&amp;order=DESC&amp;limit=20'</span></pre>
+    </section>
+
+    <!-- 12. HTTP CODES -->
+    <section id="http-codes">
+      <div class="section-title"><span class="num">13</span> Codes HTTP retournés</div>
+      
+      <div class="http-codes">
+        <div class="http-code code-2xx"><div class="code-num">200</div><div class="code-label-txt">OK — Lecture réussie</div></div>
+        <div class="http-code code-2xx"><div class="code-num">201</div><div class="code-label-txt">Created — Création réussie</div></div>
+        <div class="http-code code-2xx"><div class="code-num">204</div><div class="code-label-txt">No Content — Suppression OK</div></div>
+        <div class="http-code code-3xx"><div class="code-num">206</div><div class="code-label-txt">Partial Content — Résultat paginé</div></div>
+        <div class="http-code code-3xx"><div class="code-num">207</div><div class="code-label-txt">Multi-Status — Réponse multiple</div></div>
+        <div class="http-code code-4xx"><div class="code-num">400</div><div class="code-label-txt">Bad Request — Paramètre invalide</div></div>
+        <div class="http-code code-4xx"><div class="code-num">401</div><div class="code-label-txt">Unauthorized — Session invalide</div></div>
+        <div class="http-code code-4xx"><div class="code-num">403</div><div class="code-label-txt">Forbidden — Droits insuffisants</div></div>
+        <div class="http-code code-4xx"><div class="code-num">404</div><div class="code-label-txt">Not Found — Ressource inexistante</div></div>
+        <div class="http-code code-4xx"><div class="code-num">405</div><div class="code-label-txt">Method Not Allowed — Méthode HTTP incorrecte</div></div>
+        <div class="http-code code-4xx"><div class="code-num">409</div><div class="code-label-txt">Conflict — Doublon / contrainte</div></div>
+        <div class="http-code code-5xx"><div class="code-num">500</div><div class="code-label-txt">Server Error — Erreur interne</div></div>
+      </div>
+
+      <h3>Format des erreurs</h3>
+      <div class="code-label">JSON — Réponse d'erreur type</div>
+      <pre>{
+  <span class="key">"ERROR"</span>: <span class="string">"ERROR_SESSION_TOKEN_INVALID"</span>,
+  <span class="key">"message"</span>: <span class="string">"Session Token seems invalid"</span>
+}</pre>
+
+      <h3>Erreurs fréquentes</h3>
+      <table><thead><tr><th>Code erreur</th><th>Cause</th><th>Solution</th></tr></thead>
+      <tbody>
+        <tr><td class="field-name">ERROR_SESSION_TOKEN_MISSING</td><td>Header Session-Token absent</td><td>Ajouter le header Session-Token</td></tr>
+        <tr><td class="field-name">ERROR_SESSION_TOKEN_INVALID</td><td>Session expirée ou invalide</td><td>Re-faire un initSession</td></tr>
+        <tr><td class="field-name">ERROR_APP_TOKEN_PARAMETERS_MISSING</td><td>App-Token requis mais absent</td><td>Ajouter le header App-Token</td></tr>
+        <tr><td class="field-name">ERROR_WRONG_HTTPVERB</td><td>Mauvaise méthode HTTP</td><td>Vérifier GET/POST/PUT/DELETE</td></tr>
+        <tr><td class="field-name">ERROR_ITEM_NOT_FOUND</td><td>ID inexistant</td><td>Vérifier l'ID et les droits entité</td></tr>
+        <tr><td class="field-name">ERROR_RIGHT_MISSING</td><td>Profil sans droits sur la ressource</td><td>Vérifier le profil et ses habilitations</td></tr>
+        <tr><td class="field-name">ERROR_NOT_DELETED</td><td>Purge d'un élément non en corbeille</td><td>D'abord supprimer (sans force_purge), puis purger</td></tr>
+        <tr><td class="field-name">ERROR_FIELDS_MISSING</td><td>Champ obligatoire manquant</td><td>Vérifier les champs requis du schéma</td></tr>
+      </tbody></table>
+    </section>
+
+    <!-- 13. BONNES PRATIQUES -->
+    <section id="best-practices">
+      <div class="section-title"><span class="num">14</span> Bonnes pratiques</div>
+
+      <h3>Gestion des sessions v1</h3>
+      <ul>
+        <li>Réutiliser le <span class="inline-code">session_token</span> entre les appels — ne pas ouvrir une nouvelle session à chaque requête</li>
+        <li>Appeler <span class="inline-code">killSession</span> à la fin du traitement pour libérer les ressources</li>
+        <li>En cas de <span class="inline-code">401</span>, réauthentifier et réessayer automatiquement</li>
+        <li>Les sessions sont en <strong>lecture seule par défaut</strong> — ajouter <span class="inline-code">session_write=true</span> uniquement si nécessaire</li>
+        <li>Mode lecture seule = appels parallèles possibles. Mode écriture = appels séquentiels obligatoires</li>
+      </ul>
+
+      <h3>Performance et pagination</h3>
+      <ul>
+        <li>Toujours utiliser la pagination — ne jamais récupérer tout en une seule requête</li>
+        <li>Utiliser <span class="inline-code">only_id=true</span> quand seuls les IDs sont nécessaires</li>
+        <li>Utiliser <span class="inline-code">forcedisplay</span> en Search API pour limiter les colonnes retournées</li>
+        <li>Préférer la Search API à la lecture de masse pour les filtrages complexes</li>
+        <li>Utiliser <span class="inline-code">get_sha1=true</span> pour vérifier si un objet a changé avant de le re-télécharger</li>
+      </ul>
+
+      <h3>Gestion des données</h3>
+      <ul>
+        <li>Toujours fournir le header <span class="inline-code">Content-Type: application/json</span></li>
+        <li>Les requêtes <span class="inline-code">GET</span> doivent avoir un corps vide — passer les paramètres en query string</li>
+        <li>Pour les champs HTML (comme <span class="inline-code">content</span> d'un ticket), encoder correctement le HTML</li>
+        <li>Les champs préfixés par <span class="inline-code">_</span> (ex: <span class="inline-code">_users_id_assign</span>) sont des champs d'action spéciaux non stockés directement</li>
+        <li>Utiliser <span class="inline-code">expand_dropdowns=true</span> pour la lisibilité, mais travailler avec les IDs numériques en écriture</li>
+      </ul>
+
+      <h3>API v2 — Recommandations</h3>
+      <ul>
+        <li>Consulter la documentation Swagger auto-générée sur <span class="inline-code">/api.php/doc</span></li>
+        <li>Utiliser le versioning explicite <span class="inline-code">/api.php/v2/...</span> pour la stabilité</li>
+        <li>Préférer <span class="inline-code">Authorization Code</span> pour les apps interactives, <span class="inline-code">Password Grant</span> pour les scripts</li>
+        <li>Implémenter le <em>refresh token</em> — les access tokens expirent après 1 heure par défaut</li>
+        <li>Explorer les capacités GraphQL sur <span class="inline-code">/api.php/GraphQL</span> pour les requêtes complexes imbriquées (lecture seule)</li>
+      </ul>
+    </section>
+
+    <!-- 14. SECURITE -->
+    <section id="security">
+      <div class="section-title"><span class="num">15</span> Sécurité & Permissions</div>
+
+      <h3>Filtrage de l'accès API</h3>
+      <p>Configurable dans <em>Configuration &gt; Générale &gt; API</em> :</p>
+      <ul>
+        <li><strong>Plage IPv4/IPv6</strong> — Restreindre l'accès à des adresses IP spécifiques par client API</li>
+        <li><strong>App-Token</strong> — Identifier et tracer les appels par application (chaque client a son historique)</li>
+        <li><strong>Méthodes d'auth</strong> — Activer/désactiver indépendamment login/pass et token personnel</li>
+      </ul>
+
+      <h3>Modèle de permissions GLPI</h3>
+      <p>Les appels API respectent strictement le modèle de droits GLPI :</p>
+      <ul>
+        <li><strong>Profil</strong> — Détermine les droits CRUD par type d'objet (lecture, écriture, suppression...)</li>
+        <li><strong>Entité</strong> — Restreint la visibilité aux objets de l'entité active et ses sous-entités (si récursif)</li>
+        <li><strong>Règles de visibilité</strong> — Un ticket privé n'est visible que par son groupe/technicien assigné</li>
+        <li><strong>changeActiveProfile</strong> et <strong>changeActiveEntities</strong> permettent de basculer de contexte en cours de session</li>
+      </ul>
+
+      <div class="alert alert-danger">
+        <strong>Attention :</strong> Ne jamais exposer le <span class="inline-code">user_token</span> ou le <span class="inline-code">App-Token</span> dans du code client (JavaScript front-end, dépôts publics). Utiliser des variables d'environnement côté serveur.
+      </div>
+
+      <h3>HTTPS obligatoire</h3>
+      <div class="alert alert-warn">
+        Toujours utiliser HTTPS en production. Les tokens circulent en clair dans les headers HTTP. Une connexion non chiffrée expose les credentials de session.
+      </div>
+
+      <h3>Récupération de mot de passe</h3>
+      <p>L'endpoint <span class="inline-code">PUT /apirest.php/lostPassword</span> permet le reset de mot de passe par email — accessible sans session, sous réserve que les notifications GLPI soient activées et que l'email appartienne à un compte existant.</p>
+    </section>
+
+    <div class="doc-footer">
+      <p>Documentation générée pour <strong>GLPI 11.0.7</strong> — API REST v1 (<span class="inline-code">/apirest.php</span>) &amp; v2 (<span class="inline-code">/api.php</span>).</p>
+      <p style="margin-top: 6px;">Sources : <a href="https://help.glpi-project.org/documentation/modules/configuration/general/api/api" style="color: var(--accent);">help.glpi-project.org</a> · <a href="https://github.com/glpi-project/glpi/blob/main/apirest.md" style="color: var(--accent);">github.com/glpi-project</a></p>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<script>
+function toggleEndpoint(header) {
+  const body = header.nextElementSibling;
+  const chevron = header.querySelector('.chevron');
+  body.classList.toggle('collapsed');
+  chevron.classList.toggle('open');
+}
+
+function switchTab(btn, tabId) {
+  const container = btn.closest('.card, section, div');
+  container.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  container.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(tabId).classList.add('active');
+}
+
+function filterNav(val) {
+  const links = document.querySelectorAll('.nav-link');
+  const q = val.toLowerCase();
+  links.forEach(link => {
+    link.style.display = (!q || link.textContent.toLowerCase().includes(q)) ? '' : 'none';
+  });
+}
+
+// Smooth active nav on scroll
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-link');
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      navLinks.forEach(l => l.classList.remove('active'));
+      const active = document.querySelector(`.nav-link[href="#${entry.target.id}"]`);
+      if (active) active.classList.add('active');
+    }
+  });
+}, { threshold: 0.2 });
+sections.forEach(s => obs.observe(s));
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+Feuille 1 : 
+    - State (v1 : Dropdowns/State , v2 : State) : name
+    - Location (v1 : Dropdowns/Location , v2 : Dropdowns/Location) : name
+    - Model (v1 : Dropdowns/Item_type+Model , v2 : Dropdowns/Model) : name , product_number , image
+    - Manufacturer (v1 : Dropdowns/Manufacturer , v2 : Dropdowns/Manufacturer): name
+    - Computer (Computer , v2 : Assets/Computer) :  name , contact , location , model , manufacturer , state , otherserial 
+
+Feuille 2 : 
+    - GetState (v2 : Assistance/State)
+    - GetPriority (v2 : Assistance/Priority)
+    - Ticket (v1 : Ticket , v2 : Assistance/Ticket) : ref (sur obj) , name (titre) , content (description) , status { id } , priority (id) , date (date+heure) , type { id } , items (feuille1)
+
+Feuille 3 : 
+    - Cost (v1 : Assistance/Ticket/id/Cost , v2 : Assistance/Ticket/{id}/Cost) : ticket (feuille2) , duration (secondes) , cost_time , cost_fixed
