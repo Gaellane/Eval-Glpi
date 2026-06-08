@@ -13,7 +13,7 @@ Table avec fonctionnalités complètes (colonnes dynamiques, pagination, recherc
 ### Props
 ```js
 /**
- * @param {Array<{key, label, sortable}>} columns - Définition des colonnes
+ * @param {Array<{key, label, sortable, render?}>} columns - Définition des colonnes. Optionnel `render(row)` pour afficher du JSX personnalisé.
  * @param {Array} data - Données du tableau
  * @param {boolean} loading - Indicateur de chargement
  * @param {{page, limit, total}} pagination - Info pagination
@@ -32,7 +32,7 @@ import Pagination from './Pagination'
 
 export function DataTable({
   columns,
-  data,
+  data = [],
   loading = false,
   pagination = { page: 1, limit: 10, total: 0 },
   onPageChange,
@@ -64,61 +64,77 @@ export function DataTable({
   return (
     <div className="space-y-4">
       {searchable && (
-        <input
-          type="text"
-          placeholder="Rechercher..."
-          value={searchTerm}
-          onChange={handleSearch}
-          className="w-full px-4 py-2 border border-gray-300 rounded"
-        />
+        <div className="flex items-center gap-2">
+          <input
+            type="text"
+            placeholder="Rechercher..."
+            value={searchTerm}
+            onChange={handleSearch}
+            className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500"
+          />
+          <button
+            type="button"
+            onClick={() => onSearch?.('')}
+            className="px-3 py-2 bg-gray-100 text-gray-700 rounded-md text-sm"
+          >
+            Reset
+          </button>
+        </div>
       )}
 
-      <div className="overflow-x-auto">
-        <table className="w-full border-collapse border border-gray-300">
-          <thead className="bg-gray-100">
+      <div className="overflow-x-auto bg-white rounded-lg shadow-sm border border-gray-200">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
             <tr>
               {columns.map(col => (
                 <th
                   key={col.key}
-                  className="p-3 text-left font-bold cursor-pointer hover:bg-gray-200"
+                  className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider select-none cursor-pointer"
                   onClick={() => handleSort(col.key)}
                 >
-                  {col.label}
-                  {col.sortable && sortBy === col.key && (
-                    <span>{sortOrder === 'asc' ? ' ↑' : ' ↓'}</span>
-                  )}
+                  <div className="flex items-center gap-2">
+                    <span>{col.label}</span>
+                    {col.sortable && sortBy === col.key && (
+                      <span className="text-gray-500 text-sm">{sortOrder === 'asc' ? '↑' : '↓'}</span>
+                    )}
+                  </div>
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody>
-            {data.length === 0 ? (
+          <tbody className="bg-white divide-y divide-gray-100">
+            {(!data || data.length === 0) ? (
               <tr>
-                <td colSpan={columns.length} className="p-4 text-center text-gray-500">
+                <td colSpan={columns.length} className="px-6 py-8 text-center text-gray-500">
                   Aucune donnée
                 </td>
               </tr>
             ) : (
-              data.map((row, idx) => (
-                <tr key={idx} className="border-b hover:bg-gray-50">
-                  {columns.map(col => (
-                    <td key={col.key} className="p-3">
-                      {row[col.key]}
-                    </td>
-                  ))}
-                </tr>
-              ))
+              data.map((row, idx) => {
+                const key = row?.id ?? row?.ID ?? row?._id ?? idx
+                return (
+                  <tr key={key} className="hover:bg-gray-50">
+                    {columns.map(col => (
+                      <td key={col.key} className="px-4 py-3 text-sm text-gray-700 align-top">
+                        {typeof col.render === 'function' ? col.render(row) : row[col.key]}
+                      </td>
+                    ))}
+                  </tr>
+                )
+              })
             )}
           </tbody>
         </table>
       </div>
 
-      {pagination.total > 0 && (
-        <Pagination
-          current={pagination.page}
-          total={Math.ceil(pagination.total / pagination.limit)}
-          onPageChange={onPageChange}
-        />
+      {pagination?.total > 0 && (
+        <div className="flex items-center justify-end">
+          <Pagination
+            current={pagination.page}
+            total={Math.ceil(pagination.total / pagination.limit)}
+            onPageChange={onPageChange}
+          />
+        </div>
       )}
     </div>
   )

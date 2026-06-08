@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Règles Métier GLPI 11.0.7</title>
+<style>
+body{
+    font-family: Arial, sans-serif;
+    margin:40px;
+    line-height:1.6;
+}
+h1{
+    color:#1565c0;
+}
+h2{
+    color:#1976d2;
+    border-bottom:1px solid #ddd;
+}
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+table,th,td{
+    border:1px solid #ccc;
+}
+th,td{
+    padding:10px;
+}
+.code{
+    background:#f5f5f5;
+    padding:10px;
+    border-left:4px solid #1976d2;
+}
+</style>
+</head>
+<body>
+
+<h1>GLPI 11.0.7 - Règles Métier</h1>
+
+<h2>1. Gestion des Tickets</h2>
+
+<h3>Types de tickets</h3>
+<ul>
+    <li>Incident : dysfonctionnement ou panne.</li>
+    <li>Demande : besoin ou requête utilisateur.</li>
+</ul>
+
+<h3>Cycle de vie d'un ticket</h3>
+
+<table>
+<tr>
+    <th>Statut</th>
+    <th>Description</th>
+</tr>
+<tr>
+    <td>New</td>
+    <td>Ticket nouvellement créé.</td>
+</tr>
+<tr>
+    <td>Approval</td>
+    <td>En attente de validation.</td>
+</tr>
+<tr>
+    <td>Processing (Assigned)</td>
+    <td>Assigné à un technicien, groupe ou fournisseur.</td>
+</tr>
+<tr>
+    <td>Processing (Planned)</td>
+    <td>Une tâche planifiée existe.</td>
+</tr>
+<tr>
+    <td>Pending</td>
+    <td>En attente d'informations ou d'action externe.</td>
+</tr>
+<tr>
+    <td>Solved</td>
+    <td>Solution proposée.</td>
+</tr>
+<tr>
+    <td>Closed</td>
+    <td>Solution validée et ticket clôturé.</td>
+</tr>
+</table>
+
+<h3>Règles automatiques</h3>
+
+<ul>
+    <li>Tout ticket commence à l'état <b>New</b>.</li>
+    <li>Une assignation passe le ticket en <b>Processing (Assigned)</b>.</li>
+    <li>Une tâche planifiée passe le ticket en <b>Processing (Planned)</b>.</li>
+    <li>L'ajout d'une solution passe le ticket en <b>Solved</b>.</li>
+    <li>La validation de la solution passe le ticket en <b>Closed</b>.</li>
+</ul>
+
+<h3>Priorité</h3>
+
+<div class="code">
+Priorité = Matrice(Urgence, Impact)
+</div>
+
+<ul>
+    <li>L'utilisateur définit l'urgence.</li>
+    <li>Le technicien définit l'impact.</li>
+    <li>GLPI calcule automatiquement la priorité.</li>
+</ul>
+
+<h3>Règles Métier (Business Rules)</h3>
+
+<p>
+Les règles métier permettent de modifier automatiquement un ticket lors
+de sa création ou de sa mise à jour.
+</p>
+
+Exemples :
+
+<ul>
+    <li>Catégoriser automatiquement un ticket.</li>
+    <li>Assigner automatiquement un groupe.</li>
+    <li>Assigner automatiquement un technicien.</li>
+    <li>Modifier l'urgence.</li>
+    <li>Modifier la priorité.</li>
+    <li>Lancer une validation.</li>
+    <li>Associer automatiquement un équipement.</li>
+</ul>
+
+<h2>2. Gestion des Assets</h2>
+
+<p>
+Un Asset représente un élément du parc informatique ou matériel.
+</p>
+
+<h3>Types d'Assets disponibles</h3>
+
+<ul>
+    <li>Ordinateurs</li>
+    <li>Moniteurs</li>
+    <li>Imprimantes</li>
+    <li>Téléphones</li>
+    <li>Équipements réseau</li>
+    <li>Périphériques</li>
+    <li>Logiciels</li>
+    <li>Cartouches</li>
+    <li>Consommables</li>
+    <li>Racks</li>
+    <li>PDU</li>
+    <li>Câbles</li>
+    <li>Cartes SIM</li>
+    <li>Assets personnalisés (GLPI 11)</li>
+</ul>
+
+<h3>Relations entre Assets</h3>
+
+<ul>
+    <li>Un ordinateur peut posséder plusieurs composants.</li>
+    <li>Un écran peut être lié à un ordinateur.</li>
+    <li>Un périphérique peut être partagé.</li>
+    <li>Un utilisateur peut être affecté à plusieurs assets.</li>
+    <li>Un asset appartient à une entité.</li>
+</ul>
+
+<h3>Informations importantes</h3>
+
+<ul>
+    <li>Nom.</li>
+    <li>Numéro d'inventaire.</li>
+    <li>Numéro de série.</li>
+    <li>État.</li>
+    <li>Localisation.</li>
+    <li>Utilisateur affecté.</li>
+    <li>Informations financières.</li>
+</ul>
+
+<h2>3. Gestion de l'Inventory</h2>
+
+<h3>Sources d'inventaire</h3>
+
+<ul>
+    <li>Création manuelle.</li>
+    <li>GLPI Agent.</li>
+    <li>Native Inventory.</li>
+    <li>SNMP Inventory.</li>
+</ul>
+
+<h3>Cycle d'inventaire</h3>
+
+<ol>
+    <li>L'agent collecte les informations.</li>
+    <li>Les données sont envoyées à GLPI.</li>
+    <li>GLPI applique les règles d'inventaire.</li>
+    <li>Les assets sont créés ou mis à jour.</li>
+    <li>Les composants sont synchronisés.</li>
+</ol>
+
+<h3>Règles d'import</h3>
+
+<ul>
+    <li>Identification via numéro de série.</li>
+    <li>Identification via UUID.</li>
+    <li>Identification via MAC Address.</li>
+    <li>Mise à jour automatique si l'asset existe déjà.</li>
+    <li>Création automatique sinon.</li>
+</ul>
+
+<h3>Règles de découverte réseau</h3>
+
+<ul>
+    <li>Découverte des équipements sur le réseau.</li>
+    <li>Classification automatique par type.</li>
+    <li>Import SNMP des informations techniques.</li>
+</ul>
+
+<h3>Assets personnalisés (GLPI 11)</h3>
+
+<ul>
+    <li>Création de nouveaux types d'assets.</li>
+    <li>Champs personnalisés.</li>
+    <li>Intégration avec l'inventaire natif.</li>
+    <li>Gestion via API REST v2.</li>
+</ul>
+
+<h2>4. Relations entre les modules</h2>
+
+<table>
+<tr>
+    <th>Module</th>
+    <th>Relation</th>
+</tr>
+<tr>
+    <td>Ticket → Asset</td>
+    <td>Un ticket peut être lié à un ou plusieurs assets.</td>
+</tr>
+<tr>
+    <td>Inventory → Asset</td>
+    <td>L'inventaire crée ou met à jour les assets.</td>
+</tr>
+<tr>
+    <td>Ticket → Utilisateur</td>
+    <td>Un utilisateur est demandeur ou technicien.</td>
+</tr>
+<tr>
+    <td>Asset → Utilisateur</td>
+    <td>Un asset peut être affecté à un utilisateur.</td>
+</tr>
+<tr>
+    <td>Asset → Entité</td>
+    <td>Chaque asset appartient à une entité GLPI.</td>
+</tr>
+</table>
+
+</body>
+</html>

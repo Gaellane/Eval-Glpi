@@ -23,12 +23,7 @@ async function getState(file) {
             return {
                 name :  state ,
                 comment : state ,
-                entity: {},
                 is_recursive: true,
-                parent: {
-                    id: 0
-                },
-                is_visible_helpdesk: true,
                 visibilities: {
                     computer: true,
                     monitor: true,

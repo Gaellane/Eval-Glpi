@@ -23,9 +23,9 @@ Carte basique avec un contenu simple et un style épuré.
 ```jsx
 function SimpleCard() {
   return (
-    <div className="bg-white rounded-lg shadow p-6">
-      <h3 className="text-lg font-semibold text-gray-900 mb-2">Card Title</h3>
-      <p className="text-gray-600">Contenu de la carte</p>
+    <div className="bg-white border border-slate-200 rounded-lg p-6 shadow-sm transition-all duration-200">
+      <h3 className="text-lg font-bold text-slate-900 mb-2">Card Title</h3>
+      <p className="text-slate-600">Contenu de la carte</p>
     </div>
   )
 }
@@ -58,13 +58,13 @@ Carte avec un en-tête distinct contenant titre et actions.
 ```jsx
 function CardWithHeader() {
   return (
-    <div className="bg-white rounded-lg shadow overflow-hidden">
-      <div className="border-b border-gray-200 px-6 py-4 flex justify-between items-center">
-        <h3 className="text-lg font-semibold text-gray-900">Titre</h3>
-        <button className="text-gray-500 hover:text-gray-700">⋯</button>
+    <div className="bg-white border border-slate-200 rounded-lg overflow-hidden transition-all duration-300">
+      <div className="border-b border-slate-100 px-6 py-4 flex justify-between items-center">
+        <h3 className="text-lg font-bold text-slate-900">Titre</h3>
+        <button className="text-slate-500 hover:text-slate-700">⋯</button>
       </div>
-      <div className="px-6 py-4">
-        <p className="text-gray-600">Contenu de la carte</p>
+      <div className="px-6 py-4 text-slate-600">
+        <p>Contenu de la carte</p>
       </div>
     </div>
   )
@@ -96,12 +96,12 @@ Carte avec contenu principal et pied de page pour les actions.
 ```jsx
 function CardWithFooter() {
   return (
-    <div className="bg-white rounded-lg shadow overflow-hidden">
-      <div className="px-6 py-4">
-        <p className="text-gray-600">Contenu principal de la carte</p>
+    <div className="bg-white border border-slate-200 rounded-lg overflow-hidden transition-all duration-300">
+      <div className="px-6 py-4 text-slate-600">
+        <p>Contenu principal de la carte</p>
       </div>
-      <div className="border-t border-gray-200 px-6 py-4 bg-gray-50 flex justify-end gap-2">
-        <button className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded">Annuler</button>
+      <div className="border-t border-slate-100 px-6 py-4 bg-slate-50 flex justify-end gap-2">
+        <button className="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded">Annuler</button>
         <button className="px-4 py-2 bg-teal-600 text-white rounded hover:bg-teal-700">Confirmer</button>
       </div>
     </div>
@@ -135,13 +135,13 @@ Carte contenant une image en en-tête et du contenu en dessous.
 ```jsx
 function CardWithImage() {
   return (
-    <div className="bg-white rounded-lg shadow overflow-hidden">
-      <div className="h-48 bg-gray-300 overflow-hidden">
+    <div className="bg-white border border-slate-200 rounded-lg overflow-hidden transition-all duration-300">
+      <div className="h-48 bg-slate-300 overflow-hidden">
         <img src="image.jpg" alt="Card image" className="w-full h-full object-cover" />
       </div>
       <div className="px-6 py-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">Titre</h3>
-        <p className="text-gray-600 text-sm">Description de la carte avec image</p>
+        <h3 className="text-lg font-bold text-slate-900 mb-2">Titre</h3>
+        <p className="text-slate-600 text-sm">Description de la carte avec image</p>
       </div>
     </div>
   )
@@ -174,15 +174,15 @@ Carte avec couleur de bordure ou fond indiquant un état.
 function StateCard({ state = 'info' }) {
   const stateStyles = {
     info: 'border-blue-300 bg-blue-50',
-    success: 'border-green-300 bg-green-50',
-    warning: 'border-yellow-300 bg-yellow-50',
+    success: 'border-teal-300 bg-teal-50',
+    warning: 'border-amber-300 bg-amber-50',
     error: 'border-red-300 bg-red-50'
   }
   
   return (
-    <div className={`bg-white rounded-lg shadow border-l-4 ${stateStyles[state]} px-6 py-4`}>
-      <h3 className="text-lg font-semibold text-gray-900 mb-1">Titre</h3>
-      <p className="text-gray-700">Message d'état</p>
+    <div className={`bg-white border border-slate-200 rounded-lg border-l-4 ${stateStyles[state]} px-6 py-4`}>
+      <h3 className="text-lg font-bold text-slate-900 mb-1">Titre</h3>
+      <p className="text-slate-700">Message d'état</p>
     </div>
   )
 }

@@ -1,8 +1,8 @@
 import { saveMultiple } from "../../models/assets/Asset";
 
-export async function createAsset(file, states = [], locations = [], models = {}, manufacturers = []) {
+export async function createAsset(file, states = [], locations = [], models = {}, manufacturers = [] , users = []) {
     try {
-        const allAssets = await getAssets(file, states, locations, models, manufacturers);
+        const allAssets = await getAssets(file, states, locations, models, manufacturers, users);
         const savedByType = {};
         for (const [itemType, assets] of Object.entries(allAssets)) {
             savedByType[itemType] = await saveMultiple(assets);
@@ -14,7 +14,7 @@ export async function createAsset(file, states = [], locations = [], models = {}
     }
 }
 
-async function getAssets(file, states = [], locations = [], models = {}, manufacturers = []) {
+async function getAssets(file, states = [], locations = [], models = {}, manufacturers = [] , users = []) {
     try {
 
         const assets = file
@@ -27,13 +27,15 @@ async function getAssets(file, states = [], locations = [], models = {}, manufac
                 const locationName = row.location;
                 const modelName = row.model;
                 const manufacturerName = row.manufacturer;
+                const userName = row.user;
 
                 const norm = v => (v && typeof v === 'string') ? v.trim().toLowerCase() : null;
                 const stateNameNorm = norm(stateName);
                 const locationNameNorm = norm(locationName);
                 const manufacturerNameNorm = norm(manufacturerName);
                 const modelNameNorm = norm(modelName);
-
+                const userNameNorm = norm(userName);
+                
                 const findByName = (list, needle) => {
                     if (!Array.isArray(list) || !needle) return null;
                     return list.find(item => {
@@ -47,6 +49,7 @@ async function getAssets(file, states = [], locations = [], models = {}, manufac
                 const manufacturerMatch = findByName(manufacturers, manufacturerNameNorm);
                 const modelsForType = models[item_type];
                 const modelMatch = findByName(modelsForType, modelNameNorm);
+                const userMatch = users.find(u => norm(u.username) === userNameNorm || norm(u.realname) === userNameNorm) || null;
 
                 //console.log(" [DEBUG] Asset mapping - Item Type:", item_type, "Name:", name, "Contact:", contact, "Other Serial:", otherserial, "State:", stateName, "Location:", locationName, "Model:", modelName, "Manufacturer:", manufacturerName);
 
@@ -58,7 +61,8 @@ async function getAssets(file, states = [], locations = [], models = {}, manufac
                     state: stateMatch ,
                     location: locationMatch ,
                     model: modelMatch ,
-                    manufacturer: manufacturerMatch
+                    manufacturer: manufacturerMatch, 
+                    user: userMatch
                 };
             })
             .filter(a => a.item_type && a.name);

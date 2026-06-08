@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import AssetCard from './AssetCard';
+import AssetCard from '../../components/assets/AssetCard';
 
 const AssetList = () => {
     const [assets, setAssets] = useState({});

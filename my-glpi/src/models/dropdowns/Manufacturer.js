@@ -1,10 +1,8 @@
-import { apiCall } from "../../services/api/api";
+import { apiCall, v1Headers } from "../../services/api/api";
 
 const BASE_URL = import.meta.env.VITE_BACKEND_GLPI_URL;
 
 const v1_endpoint = `${BASE_URL}/v1/Manufacturer`;
-
-const v1token = sessionStorage.getItem("session-token-v1");
 
 function createManufacturer(name, id = null) {
     const manufacturer = { name };
@@ -17,10 +15,7 @@ function createManufacturer(name, id = null) {
 }
 
 export async function save(manufacturer) {
-    const headers = {
-        "Content-Type": "application/json",
-        "Session-Token": v1token
-    };
+    const headers = v1Headers('application/json');
 
     const body = manufacturer;
 
@@ -49,10 +44,7 @@ export async function saveMultiple(locations) {
             input.push(location);
         }
         const url = v1_endpoint;
-        const headers = {
-            "Session-Token": v1token,
-            "Content-Type": "application/json"
-        };
+        const headers = v1Headers('application/json');
         const body = { input : input};
         const response = await apiCall(url, "POST", headers, body);
         const savedLocations = response.map(location => createManufacturer(location.message.split(":")[1] ?? null, location.id));

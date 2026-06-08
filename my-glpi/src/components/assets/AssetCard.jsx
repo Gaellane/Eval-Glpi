@@ -1,6 +1,35 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { v1Headers, v2Headers } from '../../services/api/api';
+
+function useAuthImage(url) {
+  const [src, setSrc] = useState(null);
+
+  useEffect(() => {
+    if (!url) return;
+    let objectUrl;
+
+    fetch(url, {
+      headers: v2Headers(),
+    })
+      .then(r => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.blob();
+      })
+      .then(blob => {
+        objectUrl = URL.createObjectURL(blob);
+        setSrc(objectUrl);
+      })
+      .catch(err => console.warn('[useAuthImage] Erreur:', err));
+
+    return () => objectUrl && URL.revokeObjectURL(objectUrl);
+  }, [url]);
+
+  return src;
+}
 
 const AssetCard = ({ asset }) => {
+  const imageUrl = asset.image?.url ?? null;
+  const imgSrc = useAuthImage(imageUrl);
 
   const getStatusColor = (state) => {
     switch (state) {
@@ -16,7 +45,6 @@ const AssetCard = ({ asset }) => {
     if (typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean') return String(v);
     if (Array.isArray(v)) return v.map(getText).filter(Boolean).join(', ');
     if (typeof v === 'object') {
-      // Prefer common display keys and recurse in case they are nested objects
       const keys = ['name', 'label', 'value', 'title'];
       for (const k of keys) {
         if (v[k] !== undefined && v[k] !== null) return getText(v[k]);
@@ -28,13 +56,18 @@ const AssetCard = ({ asset }) => {
 
   return (
     <li className="bg-white border border-slate-200 transition-all duration-300 relative rounded-lg hover:shadow-xl p-6">
-      {/* Partie Image ajoutée */}
-      <div className="w-full aspect-[16/9] mb-4 overflow-hidden rounded-md bg-slate-100">
-        {/* <img 
-          src=""
-          alt={asset.name} 
-          className="w-full h-full object-cover"
-        /> */}
+      <div className="w-full aspect-[16/9] mb-4 overflow-hidden rounded-md bg-slate-100 flex items-center justify-center">
+        {imgSrc ? (
+          <img
+            src={imgSrc}
+            alt={asset.name}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <span className="text-slate-400 text-sm">
+            {imageUrl ? 'Chargement…' : 'Aucune image'}
+          </span>
+        )}
       </div>
 
       <div className="flex justify-between items-start">
@@ -49,7 +82,7 @@ const AssetCard = ({ asset }) => {
           );
         })()}
       </div>
-      
+
       <div className="mt-4 space-y-1">
         <p className="text-sm text-slate-600"><strong>Modèle :</strong> {getText(asset.model)} ({getText(asset.manufacturer)})</p>
         <p className="text-sm text-slate-600"><strong>Localisation :</strong> {getText(asset.location)}</p>

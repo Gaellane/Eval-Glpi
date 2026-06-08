@@ -1,10 +1,9 @@
-import { apiCall } from "../../services/api/api";
+
+import { apiCall, v1Headers, v2Headers } from "../../services/api/api";
 
 const BASE_URL = import.meta.env.VITE_BACKEND_GLPI_URL;
 const v2_endpoint = BASE_URL+'/v2.3/Dropdowns/State';
 const v1_endpoint = BASE_URL+'/v1/State';
-const v1token = sessionStorage.getItem("session-token-v1");
-const v2token = sessionStorage.getItem("user-token");
 
 
 function createAssetState(name, id = null) {
@@ -22,10 +21,7 @@ export async function save(state) {
     //     "Authorization": "Bearer " + v2token
     // };
 
-    const headers = {
-        "Session-Token": v1token,
-        "Content-Type": "application/json"
-    };
+    const headers = v1Headers('application/json');
     const body = { input : [state]};
     try {   
         const response = await apiCall(url, "POST", headers, body);
@@ -43,10 +39,7 @@ export async function saveMultiple(states) {
             input.push(state);
         }
         const url = v1_endpoint;
-        const headers = {
-            "Session-Token": v1token,
-            "Content-Type": "application/json"
-        };
+        const headers = v1Headers('application/json');
         const body = { input : input};
         const response = await apiCall(url, "POST", headers, body);
         console.log(response);

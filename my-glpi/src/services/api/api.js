@@ -4,9 +4,25 @@ const CLIENT_SECRET = import.meta.env.VITE_CLIENT_SECRET;
 const USERNAME = import.meta.env.VITE_USERNAME;
 const PASSWORD = import.meta.env.VITE_PASSWORD;
 
+// Helpers to build request headers dynamically (reads tokens from sessionStorage)
+export function v1Headers(contentType = null) {
+    const token = sessionStorage.getItem("session-token-v1");
+    const headers = {};
+    if (token) headers["Session-Token"] = token;
+    if (contentType) headers["Content-Type"] = contentType;
+    return headers;
+}
+
+export function v2Headers(contentType = null) {
+    const token = sessionStorage.getItem("user-token");
+    const headers = {};
+    if (token) headers["Authorization"] = `Bearer ${token}`;
+    if (contentType) headers["Content-Type"] = contentType;
+    return headers;
+}
+
 export async function apiCall(url , method , headers , body = null ,  parameters = {} , debug=false ) {
     try {
-
         const options = {
             method : method ? method : "GET",
             headers : headers ? headers : {},
@@ -95,12 +111,13 @@ export async function refreshToken() {
             "Content-Type": "application/json"
         };
         
-        const retour = await apiCall(url , "POST" , headers , body);
+        const retour = await fetch(url , { method: 'POST', headers, body: JSON.stringify(body) });
+        const data = await retour.json();
 
-        console.log(" [DEBUG] Token refresh response:", retour);
+        sessionStorage.setItem("user-token" , data["access_token"]);
+        sessionStorage.setItem("refresh-token" , data["refresh_token"]);
 
-        sessionStorage.setItem("user-token" , retour["access_token"]);
-        sessionStorage.setItem("refresh-token" , retour["refresh_token"]);
+        await refreshV1Session();
 
     } catch(error) {
         throw error;

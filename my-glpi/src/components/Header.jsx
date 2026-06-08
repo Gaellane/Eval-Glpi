@@ -49,7 +49,7 @@ function Header() {
                             {isBO && (
                                 <>
                                     <li>
-                                        <a className="text-gray-500 transition hover:text-gray-500/75" href="#"> Dashboard </a>
+                                        <a className="text-gray-500 transition hover:text-gray-500/75" href="/bo"> Dashboard </a>
                                     </li>
 
                                     <li>
@@ -61,7 +61,7 @@ function Header() {
                                     </li>
 
                                     <li>
-                                        <a className="text-gray-500 transition hover:text-gray-500/75" href="#"> Tickets </a>
+                                        <a className="text-gray-500 transition hover:text-gray-500/75" href="/bo/ticket"> Tickets </a>
                                     </li>
                                 </>
                             )}
@@ -95,8 +95,19 @@ function Header() {
                                 Refresh Token
                             </button>
                         </div>
+                        
                     </div>
                     )}
+                    {!isBO && (
+                            <div className="sm:flex sm:gap-4">
+                            <a href="/"
+                             className={`w-full text-white bg-teal-600 hover:bg-teal-700 focus:ring-4 focus:outline-none focus:ring-teal-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            >
+                                Login as backoffice
+                            </a>
+                        </div>
+                        
+                        )}
                 </div>
             </div>
             {error && (

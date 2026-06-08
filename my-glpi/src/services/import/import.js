@@ -8,6 +8,8 @@ import { createTicket } from "./importTicket";
 import { createTicketCost } from "./importTicketCost";
 import { resetAllEntities } from "../reset/reset";
 import { importDocuments } from "./importDocument";
+import { createUser } from "./importUser";
+import { chargerDataStorage } from "../data/data";
 
 export async function parseFile(file, id ) {
     if (!file) return;
@@ -50,7 +52,9 @@ export async function importFile(files , importImage=true) {
         console.log(" [DEBUG] Manufacturers : " ,manufacturers);
         const models = await createModel(file1);
         console.log(" [DEBUG] Models : ", models);
-        const assets = await createAsset(file1, status, locations, models, manufacturers);
+        const users = await createUser(file1);
+        console.log(" [DEBUG] Users : ", users);
+        const assets = await createAsset(file1, status, locations, models, manufacturers , users);
         console.log(" [DEBUG] Assets : ", assets);
 
         // FILE 2 
@@ -69,6 +73,8 @@ export async function importFile(files , importImage=true) {
             const images = await importDocuments(zip, assets); 
             console.log(" [DEBUG] Imported Images : ", images);
         }
+
+        await chargerDataStorage();
 
 
     } catch (error) {
