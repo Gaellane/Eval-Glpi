@@ -3,6 +3,7 @@ import { apiCall, v1Headers, v2Headers } from "../../services/api/api";
 const BASE_URL = import.meta.env.VITE_BACKEND_GLPI_URL;
 const v1_endpoint = BASE_URL + '/v1/TicketCost';
 const v2_endpoint = BASE_URL+ '/v2.3/Assistance/Ticket';
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 // ─── Entity ───────────────────────────────────────────────────────────────────
 
@@ -61,6 +62,25 @@ export async function getAllByTicket(ticketId) {
             )
         )
     } catch(error) {
+        throw error;
+    }
+}
+
+export async function saveSuperCost(ticketId , cost=null ,ouverture =null){
+    try {
+        let obj = {ticketId : ticketId};
+        if(cost && ouverture ==0) obj.superCost= cost;
+        if(ouverture &&cost==0) obj.ouverture= ouverture;
+        const response =await apiCall(BACKEND_URL+"/api/ticketcosts" , "POST" , {"Content-Type": "application/json"} , obj)
+    } catch (error) {
+        throw error;
+    }
+}
+
+export async function deleteSuperCost(ticketId){
+    try {
+        const response =await apiCall(BACKEND_URL+"/api/ticketcosts/"+ticketId , "DELETE" )
+    } catch (error) {
         throw error;
     }
 }

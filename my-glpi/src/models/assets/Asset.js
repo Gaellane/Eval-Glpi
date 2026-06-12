@@ -10,7 +10,7 @@ const v2_endpoint = BASE_URL + '/v2.3/Assets/';
 //   hasContact     → présence du champ `contact` dans la table
 //   hasManufacturer→ présence du champ `manufacturers_id` dans la table
 //   hasState       → présence du champ `states_id` dans la table
-const ASSET_FIELDS = {
+export const ASSET_FIELDS = {
     // ── Assets physiques standard ────────────────────────────────────────────
     Computer:           { model: "computermodels_id",           hasContact: true,  hasManufacturer: true,  hasState: true  },
     Monitor:            { model: "monitormodels_id",            hasContact: true,  hasManufacturer: true,  hasState: true  },

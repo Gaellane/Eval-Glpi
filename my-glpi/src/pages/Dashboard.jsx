@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { getAssetsStats, getTicketStats  } from '../services/data/data';
 import CardWithHeader from '../components/ui/CartWithHeader';
 import Spinner from '../components/ui/Spinner';
+import { getAllCostsByAssets } from '../models/assistance/Ticket';
 
 function Dashboard() {
     const [assetsStats, setAssetsStats] = useState({ elements: [], total: 0 });
     const [ticketStats, setTicketStats] = useState({ elements: [], total: 0 });
     const [ticketCosts, setTicketCosts] = useState({ totalDuration: 0, totalCostTime: 0, totalCostFixed: 0, totalCostTimeWC: 0 });
+    const [statsCosts , setStatsCosts] = useState({});
     const [loading, setLoading] = useState(true);
 
 
@@ -18,6 +20,9 @@ function Dashboard() {
                 const data = await getTicketStats();
                 setTicketStats(data);
                 setTicketCosts(data.costs);
+                const retourCosts = await getAllCostsByAssets();
+                setStatsCosts(retourCosts);
+                console.log("ETO EHHHH",Object.entries(retourCosts))
             } catch (error) {
                 alert("Erreur lors du chargement des statistiques : " + error.message);
             } finally {
@@ -65,6 +70,29 @@ function Dashboard() {
                 <CardWithHeader props={{ title: "Coût fixe total", content: ticketCosts.totalCostFixed }} />
                 <CardWithHeader props={{ title: "Coût temps sans prise en compte du temps", content: ticketCosts.totalCostTimeWC }} />
             </div>
+
+            <table>
+                {/* <thead> */}
+                    <tr>
+                        <th>Item</th>
+                        <th>TotalGlpi</th>
+                        <th>Total SQLITE</th>
+                        <th>Ouverture</th>
+                        <th>Total</th>
+                    </tr>
+                {/* </thead> */}
+                {/* <tbody> */}
+                    {statsCosts && Object.entries(statsCosts).map( s =>(
+                        <tr>
+                            <td>{ s[0] }</td>
+                            <td>{ s[1].totalCostGlpi }</td>
+                            <td>{ s[1].super_cost }</td>
+                            <td>{ s[1].ouverture }</td>
+                            <td>{ s[1].totalCost }</td>
+                        </tr>
+                    ))}
+                {/* </tbody> */}
+            </table>
         </div>
     );
 }

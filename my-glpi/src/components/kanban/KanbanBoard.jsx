@@ -5,7 +5,7 @@ import { EditCardModal } from "../../components/kanban/EditCardModal";
 import { getAll, STATUS_MAPPING, updateStatus } from "../../models/assistance/Ticket";
 import { InformationCardModal } from "./InformationCardModal";
 import { getAllTicketStatus, getAllTraductionsByLangue } from "../../models/config/TicketStatus";
-
+import { CostCardModal }  from "../../components/kanban/CostCardModal";
 
 let nextId = 100;
 
@@ -17,6 +17,7 @@ export default function KanbanBoard() {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(false);
   const [confirmationcard, setConfirmationCard] = useState(null);
+  const [costcard , setCostCard] = useState(null);
   const langue = localStorage.getItem("lang") ? JSON.parse(localStorage.getItem("lang")) : {
     "name": "Anglais",
     "code": "ang",
@@ -84,8 +85,14 @@ export default function KanbanBoard() {
 
     const ticket = tickets.find(t => t.id === dragCardId.current);
 
-    if (ticket?.status?.id === 6 && targetColumnId === 1) {
+    if (ticket?.status?.id === 6 ) {
       setConfirmationCard({ ...ticket, status: { id: targetColumnId } });
+      dragCardId.current = null;
+      return;
+    }
+
+    if(targetColumnId==6) {
+      setCostCard({ ...ticket, status: { id: targetColumnId } });
       dragCardId.current = null;
       return;
     }
@@ -170,6 +177,14 @@ export default function KanbanBoard() {
         <EditCardModal
           card={confirmationcard}
           onClose={() => setConfirmationCard(null)}
+          afterSave={fetchTickets}
+        />
+      )}
+
+      {costcard && (
+        <CostCardModal
+          card={costcard}
+          onClose={() => setCostCard(null)}
           afterSave={fetchTickets}
         />
       )}

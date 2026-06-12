@@ -1,10 +1,11 @@
 import { apiCall, v1Headers, v2Headers } from "../../services/api/api";
 import { getAllByTicket } from "./TicketCost";
+import {ASSET_FIELDS} from '../assets/Asset'
 
 const BASE_URL = import.meta.env.VITE_BACKEND_GLPI_URL;
 const v2_endpoint = BASE_URL + '/v2.3/Assistance/Ticket';
 const v1_endpoint = BASE_URL + '/v1/Ticket';
-
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 
 export const PRIORITY_MAPPING = {
@@ -29,7 +30,7 @@ export const STATUS_MAPPING = {
 };
 
 
-export function createTicket(ref, name, content, status, priority, date, type, items = [], id = null) {
+export function createTicket(ref, name, content, status, priority, date, type, items = [], id = null , super_cost=null) {
     const ticket = {
         ref: ref,
         name: name,
@@ -41,6 +42,7 @@ export function createTicket(ref, name, content, status, priority, date, type, i
         items: items
     };
     if (id !== null && id !== undefined) ticket.id = id;
+    if(super_cost) ticket.super_cost=super_cost;
     return ticket;
 }
 
@@ -138,7 +140,8 @@ export async function getAll() {
 export async function getTicketById(ticketId) {
     try {
         const response = await apiCall(`${v2_endpoint}/${ticketId}` ,"GET", v2Headers());
-        return createTicket(response.ref ?? `#${response.id}`, response.name, response.content, response.status, response.priority, response.date, response.type, [], response.id);
+        const super_cost = await getTicketSuperCost(ticketId);
+        return createTicket(response.ref ?? `#${response.id}`, response.name, response.content, response.status, response.priority, response.date, response.type, [], response.id , super_cost);
     } catch (error) {
         console.error("Error fetching tickets:", error);
         throw error;
@@ -205,6 +208,101 @@ export async function getTotalCosts(tickets) {
         return { totalDuration, totalCostTime, totalCostFixed  , totalCostTimeWC};
     } catch (error) {
         console.error("Error calculating total costs:", error);
+        throw error;
+    }
+}
+
+export async function getTicketSuperCost(ticketId) {
+    try {
+        const url = BACKEND_URL+"/api/ticketcosts/"+ticketId
+        const items = await getItemsByTicket(ticketId);
+        const super_cost = await apiCall(url , "GET" );
+        console.log(super_cost);
+        const ouverture =await apiCall( BACKEND_URL+"/api/ticketcosts/ouverture/"+ticketId, "GET")
+        console.log("id ticket" , ticketId , " response : " ,ouverture);
+        const glpi_cost= await getAllByTicket(ticketId);
+
+        let totalDuration = 0;
+        let totalCostTime = 0;
+        let totalCostFixed = 0;
+        let totalCostTimeWC = 0;
+
+        glpi_cost.forEach(item => {
+                totalDuration += item.duration || 0;
+                totalCostTime += item.cost_time || 0;
+                totalCostFixed += item.cost_fixed || 0;
+                totalCostTimeWC += item.cost_time_wc || 0;
+            });
+        let categoriNb = [];
+        let nbItems = 0;
+        items.forEach(i => {
+            let categoryFoundIndex = categoriNb.findIndex(c=> c.itemtype===i.itemtype);
+            if(categoryFoundIndex===-1) {
+                categoriNb.push({
+                    itemtype : i.itemtype,
+                    nb : 1,
+                })
+            } else {
+                categoriNb[categoryFoundIndex].nb++;
+            }
+            nbItems++;
+        })
+        return {
+            ticketId : ticketId,
+            super_cost : super_cost,
+            ouverture : ouverture,
+            glpi_cost : {
+                totalDuration ,
+                totalCostTime ,
+                totalCostFixed 
+            } ,
+            categories : categoriNb,
+            nbItems:nbItems
+        };
+    } catch(error) {
+        throw error;
+    }
+}
+
+export async function getAllCostsByAssets() {
+    try {
+        const tickets = await getAll();
+        const ticketIds = tickets.map(t => t.id);
+        let retour={};
+        for(const c of Object.keys(ASSET_FIELDS)){
+            retour[c] = {
+                super_cost: 0,
+                totalCostGlpi :0,
+                totalCost  :0,
+                ouverture : 0
+            };
+        }
+        // console.log("retour :" , retour)
+        for(const i of ticketIds){
+            const costs =await getTicketSuperCost(i);
+            console.log("costs : ",costs);
+            // console.log("eto ambonoy")
+            costs.categories.forEach(c => {
+                // console.log("categorie ", c)
+                const super_cost = costs.super_cost*c.nb/costs.nbItems;
+                // const totalGlpi = ((costs.glpi_cost.totalCostTime)+(costs.glpi_cost.totalCostFxed))*c.nb/costs.nbItems;
+                const totalGlpi = ((costs.glpi_cost.totalCostTime)+(costs.glpi_cost.totalCostFixed))*c.nb/costs.nbItems;
+                const reopen = costs.ouverture*c.nb/costs.nbItems;
+                const totalCost = super_cost + totalGlpi + reopen;
+
+                console.log("calculs : " , super_cost , totalGlpi , reopen , totalCost);
+
+                retour[c.itemtype]["super_cost"]+=super_cost
+                retour[c.itemtype]["totalCostGlpi"]+=totalGlpi
+                retour[c.itemtype]["totalCost"]+=totalCost
+                retour[c.itemtype]["ouverture"]+=reopen;
+            });
+            // console.log("eto ambany")
+        }
+        console.log("retour" , retour);
+        return retour;
+    } catch(error) {
+        console.log(error);
         throw error;
     }
 }
