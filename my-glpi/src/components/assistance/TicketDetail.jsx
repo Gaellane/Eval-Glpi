@@ -1,37 +1,44 @@
-import { useLocation } from "react-router-dom";
-import { getItemsByTicket, updateStatus , STATUS_MAPPING } from "../../models/assistance/Ticket";
+import { useLocation, useNavigate } from "react-router-dom";
+import { getItemsByTicket, updateStatus, STATUS_MAPPING } from "../../models/assistance/Ticket";
 import { useEffect, useState } from "react";
 import { getAllByTicket } from "../../models/assistance/TicketCost";
+import Spinner from "../ui/Spinner";
 
 const ITEM_ICONS = {
   Computer: "💻", Monitor: "🖥️", NetworkEquipment: "🌐",
   Printer: "🖨️", Phone: "📱", Peripheral: "🔌", Software: "📦",
 };
 
-export default function TicketDetail() {
+export default function TicketDetail({ card = null }) {
   const location = useLocation();
   const props = location?.state ?? null;
   const assets = JSON.parse(localStorage.getItem("assets") || "{}");
+  const navigate = useNavigate();
 
-  const [ticket, setTicket] = useState(props);
+  const [ticket, setTicket] = useState(card || props);
   const [statusValue, setStatusValue] = useState();
   const [updatingStatus, setUpdatingStatus] = useState(false);
+  const [loadingDetails, setLoadingDetails] = useState(false);
 
   const loadDetails = async () => {
     if (!ticket || !ticket.id) return;
     try {
+      setLoadingDetails(true);  
       const items = await getItemsByTicket(ticket.id);
       const costs = await getAllByTicket(ticket.id);
       setTicket(prev => ({ ...prev, costs: costs, items: items }));
     } catch (err) {
       console.error('Failed loading ticket details', err);
+    } finally {
+      setLoadingDetails(false);
     }
   }
 
+
   useEffect(() => {
     loadDetails();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ticket]);
+
 
 
   const handleStatusUpdate = async (e) => {
@@ -45,6 +52,7 @@ export default function TicketDetail() {
       const updatedTicket = await updateStatus(ticket.id, statusValue);
       setTicket({ ...ticket, status: STATUS_MAPPING[statusValue] ?? statusValue });
       alert("Statut mis à jour avec succès !");
+      navigate("/bo/ticket");
     } catch (err) {
       console.error('Failed updating status', err);
       alert("Erreur lors de la mise à jour du statut.");
@@ -117,6 +125,8 @@ export default function TicketDetail() {
             </dl>
           </section>
 
+
+
           {ticket.items && ticket.items.length > 0 && (
             <section>
               <h3 className="text-lg font-semibold text-gray-800 mb-3">Assets liés ({ticket.items.length})</h3>
@@ -148,7 +158,8 @@ export default function TicketDetail() {
                   <li key={i} className="flex items-center gap-3 p-3 border border-gray-100 rounded hover:shadow-sm">
                     <div>
                       <div className="text-sm text-gray-500">Duree : {item.duration}</div>
-                      <div className="text-sm text-gray-500">Cout a l'heure : {item.cost_time}</div>
+                      <div className="text-sm text-gray-500">Cout temps reel : {item.cost_time}</div>
+                      <div className="text-sm text-gray-500">Cout a l'heure : {item.cost_time_wc}</div>
                       <div className="text-sm text-gray-500">Cout fixe : {item.cost_fixed}</div>
                     </div>
                   </li>
@@ -157,19 +168,23 @@ export default function TicketDetail() {
             </section>
           )}
 
-          <section className="bg-white p-4 rounded border border-gray-100">
-            <h3 className="text-sm font-medium text-gray-700 mb-2">Mettre à jour le statut</h3>
-            <form className="flex items-center gap-2" onSubmit={handleStatusUpdate}>
-              <select value={statusValue} onChange={handleOnChangeStatus} className="border p-2 rounded border-gray-300 text-sm">
-                {STATUS_MAPPING && Object.entries(STATUS_MAPPING).map(([key, label]) => (
-                  <option key={key} value={key}>{label}</option>
-                ))}
-              </select>
-              <button type="submit" disabled={updatingStatus} className="bg-teal-600 text-white py-2 px-3 rounded disabled:opacity-50 text-sm">
-                {updatingStatus ? 'Mise à jour...' : 'Mettre à jour'}
-              </button>
-            </form>
-          </section>
+          {!card && (
+
+
+            <section className="bg-white p-4 rounded border border-gray-100">
+              <h3 className="text-sm font-medium text-gray-700 mb-2">Mettre à jour le statut</h3>
+              <form className="flex items-center gap-2" onSubmit={handleStatusUpdate}>
+                <select value={statusValue} onChange={handleOnChangeStatus} className="border p-2 rounded border-gray-300 text-sm">
+                  {STATUS_MAPPING && Object.entries(STATUS_MAPPING).map(([key, label]) => (
+                    <option key={key} value={key}>{label}</option>
+                  ))}
+                </select>
+                <button type="submit" disabled={updatingStatus} className="bg-teal-600 text-white py-2 px-3 rounded disabled:opacity-50 text-sm">
+                  {updatingStatus ? 'Mise à jour...' : 'Mettre à jour'}
+                </button>
+              </form>
+            </section>
+          )}
         </div>
       </div>
     </section>

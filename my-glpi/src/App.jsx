@@ -11,7 +11,9 @@ import TicketForm from "./pages/assistance/TicketForm";
 import TicketList from "./pages/assistance/TicketList";
 import TicketDetail from "./components/assistance/TicketDetail";
 import Dashboard from "./pages/Dashboard";
-
+import KanbanBoard from "./components/kanban/KanbanBoard";
+import StatusList from "./pages/config/StatusList";
+import StatusDetail from "./pages/config/StatusDetail";
 
 function App() {
 
@@ -24,11 +26,15 @@ function App() {
           <Route path="reset" element={<Reset />} />
           <Route path="import" element={<Import />} />
           <Route path="ticket" element={<TicketList />} />
+          <Route path="ticket/status" element={<StatusList />} />
+          <Route path="ticket/status/:id" element={<StatusDetail />} />
           <Route path="ticket/:id" element={<TicketDetail />} />
         </Route>
         <Route path="/fo" element={<MainLayoutFO />}>
           <Route path="assets" element={<AssetList />} />
           <Route path="ticket/add" element={<TicketForm />} />
+          <Route path="ticket/:id" element={<TicketDetail />} />
+          <Route path="kanban" element={<KanbanBoard />} />
         </Route>
       </Routes>
       

@@ -21,13 +21,16 @@ export function v2Headers(contentType = null) {
     return headers;
 }
 
-export async function apiCall(url , method , headers , body = null ,  parameters = {} , debug=false ) {
+export async function apiCall(url , method , headers , body = null ,  parameters = {} , debug=false , isStringify=true) {
     try {
         const options = {
             method : method ? method : "GET",
             headers : headers ? headers : {},
-            body : body ? JSON.stringify(body) : null
         };
+
+        if(body && method !== "GET") {
+            options.body =JSON.stringify(body);
+        }
         
         
         const query = new URLSearchParams(parameters).toString();

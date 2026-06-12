@@ -1,3 +1,4 @@
+import { deleteTraductionsForAllValues } from "../../models/config/TicketStatus";
 import { apiCall } from "../api/api";
 
 const BASE_URL = import.meta.env.VITE_BACKEND_GLPI_URL;
@@ -37,6 +38,8 @@ const GLPI_ENTITIES = [
     { order: 21, category: "asset", itemtype: "Software",           protocol: "v1", endpointV1: "/Software" },
     { order: 22, category: "asset", itemtype: "SoftwareLicense",    protocol: "v1", endpointV1: "/SoftwareLicense" },
     { order: 23, category: "asset", itemtype: "Certificate",        protocol: "v1", endpointV1: "/Certificate" },
+
+    { order: 24, category: "asset", itemtype: "Item_Ticket",        protocol: "v1", endpointV1: "/Item_Ticket" },
 
     // ── Phase 2.6 : Documents (liens d'abord, puis fichiers) ─────────
     { order: 35, category: "document", itemtype: "Document_Item",  protocol: "v1", endpointV1: "/Document_Item", note: "Liens — supprimer avant Document" },
@@ -174,6 +177,7 @@ async function resetAllEntities(onProgress = null) {
             localStorage.removeItem("assets");
             localStorage.removeItem("documents");
             await resetEntity(entity, onProgress);
+            await deleteTraductionsForAllValues();
         }
     } catch (error) {
         console.error("Erreur fatale lors du reset :", error);

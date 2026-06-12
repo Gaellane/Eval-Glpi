@@ -79,7 +79,7 @@ export async function importFile(files , importImage=true) {
 
     } catch (error) {
         console.log(error);
-        await resetAllEntities();
+        //await resetAllEntities();
         throw error;
     }
 

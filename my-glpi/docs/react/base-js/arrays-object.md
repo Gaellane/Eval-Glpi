@@ -94,3 +94,35 @@ Si vous voulez, je peux :
 - fournir une version TypeScript;
 - intégrer une commande de debug dans l'application pour afficher le rapport d'un objet en runtime.
 
+
+
+.push() : ajoute un élément à la fin.
+
+.pop() : retire le dernier élément.
+
+.map() : crée un nouveau tableau en transformant chaque élément.
+
+.filter() : crée un nouveau tableau avec uniquement les éléments qui respectent une condition.
+
+.reduce() : Permet de "réduire" un tableau à une seule valeur (comme une somme ou un objet cumulé).
+
+.find() : Retourne la première valeur qui satisfait une condition donnée (très pratique pour chercher un élément précis).
+
+.every() / .some() : Permettent de vérifier si tous les éléments ou au moins un élément respectent une condition (retournent true ou false).
+
+```js
+const total = panier.reduce((accumulateur, plus) => {
+  return accumulateur + plus;
+}, 0); // <-- Voici la valeur initiale
+
+const total = panier.reduce((accumulateur, produit) => {
+  return accumulateur + produit.prix;
+}, 0); // <-- Voici la valeur initiale
+
+```
+
+Object.keys(monObjet) : Retourne un tableau contenant uniquement les clés (les propriétés).
+
+Object.values(monObjet) : Retourne un tableau contenant uniquement les valeurs.
+
+Object.entries(monObjet) : Retourne un tableau de tableaux, où chaque sous-tableau contient une paire [clé, valeur].

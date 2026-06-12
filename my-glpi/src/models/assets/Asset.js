@@ -37,7 +37,12 @@ const ASSET_FIELDS = {
     Certificate:        { model: null,                          hasContact: false, hasManufacturer: false, hasState: false },
     // ── Unmanaged ────────────────────────────────────────────────────────────
     Unmanaged:          { model: null,                          hasContact: false, hasManufacturer: true,  hasState: false },
+
+    Cartridge:          { model: "cartridgeitemtypes_id",                          hasContact: false, hasManufacturer: true,  hasState: true  },
+    Consumable:         { model: "consumableitemtypes_id",                          hasContact: false, hasManufacturer: true,  hasState: true  },
 };
+
+const EXCEPTIONS = ["Cartridge" , "Consumable"];
 
 export function createAsset(item_type, name, contact, otherserial, state, location, model, manufacturer, id = null , image = null , user = null) {
     const asset = { item_type, name, contact, otherserial, is_recursive: true, state, location, model, manufacturer };
@@ -80,15 +85,58 @@ function buildBody(asset, item_type) {
     return body;
 }
 
+function buildExceptionBody(asset, item_type) {
+
+    console.log("buildExceptionBody", asset, item_type);
+
+    const body = {
+        name: asset.name,
+    };
+
+    if (asset.contact) {
+        body.contact = asset.contact;
+    }
+
+    if (asset.manufacturer) {
+        body.manufacturers_id = asset.manufacturer.id || null;
+    }
+    
+    if (asset.state) {
+        body.states_id = asset.state.id || null;
+    }
+
+    const modelField = ASSET_FIELDS[item_type]?.model;
+    if (modelField) {
+        const real_model = modelField;
+        body[real_model] = asset.model?.id || null;
+    }
+
+    if(asset.user) {
+        body.users_id = asset.user.id || null;
+    }
+
+    return body;
+}   
+
 export async function save(asset) {
-    const item_type = asset.item_type || asset.itemType || asset.itemtype;
+    let item_type = asset.item_type || asset.itemType || asset.itemtype;
 
+    const isException = EXCEPTIONS.includes(item_type);
+    let url = v2_endpoint;
+    let headers = v2Headers('application/json');
     if (!item_type) throw new Error('item_type is required for save');
+    let body = buildBody(asset, item_type);
+    if(isException) {
+        url = v1_endpoint;
+        headers = v1Headers('application/json');
+        body = {input : buildExceptionBody(asset, item_type)};
+        item_type+="Item";
+    }
 
-    const url = v2_endpoint +item_type;
+    url+=item_type;
 
     try {
-        const response = await apiCall(url, "POST", v2Headers('application/json'), buildBody(asset, item_type) );
+        const response = await apiCall(url, "POST", headers, body);
         const id = response?.id || response?.ID || response?.Id || null;
         return createAsset(item_type, asset.name, asset.contact, asset.otherserial, asset.state, asset.location, asset.model, asset.manufacturer, id , null , asset.user);
     } catch (error) {
@@ -118,8 +166,9 @@ function getImage(asset_name , documents) {
 
 async function getAllByType(type , documents) {
     try {
-        const url = v2_endpoint + type;
-        const response = await apiCall(url, "GET", v2Headers());
+        const isException = EXCEPTIONS.includes(type);
+        const url = (isException ? v1_endpoint : v2_endpoint+"?limit=1000") + type;
+        const response = await apiCall(url, "GET", isException ? v1Headers() : v2Headers());
 
         return response.map(r => {
             const img = getImage(r.name, documents);

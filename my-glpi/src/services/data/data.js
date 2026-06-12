@@ -1,8 +1,8 @@
 import { getAllAssets } from "../../models/assets/Asset";
-import { getAll , TYPE_MAPPING } from "../../models/assistance/Ticket";
+import { getAll , TYPE_MAPPING , getTotalCosts } from "../../models/assistance/Ticket";
 import { getAllDocs } from "../../models/documents/Document";
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-
+import { getAllLangues } from "../../models/config/Langue";
 
 export async function chargerDataStorage() {
     const docs = await getAllDocs();
@@ -10,6 +10,16 @@ export async function chargerDataStorage() {
     localStorage.setItem("assets", JSON.stringify(assets));
     localStorage.setItem("documents", JSON.stringify(docs));
     return { assets, documents: docs };
+}
+
+export async function chargerLanguesStorage() {
+    const langue = await getAllLangues();
+    localStorage.setItem("langues", JSON.stringify(langue));
+    return langue;
+}
+
+export async function setLang(lang=null) {
+   localStorage.setItem("lang" , JSON.stringify(lang));
 }
 
 export function getAssetsStats() {
@@ -38,11 +48,20 @@ export async  function getTicketStats() {
 
         const elements = Object.keys(grouped).map(k => ({ title: k, content: `${grouped[k]} tickets` }));
         const total = (tickets || []).length;
-
-        return { elements, total };
+        const costs = await getTotalCosts(tickets);
+        return { elements, total , costs };
     } catch (error) {
         console.error('Error in getTicketStats:', error);
         return { elements: [], total: 0 };
     }
 }
 
+// export async function getTicketCostStats() {
+//     try {
+//         const stats = await getStats();
+//         return stats;
+//     } catch (error) {
+//         console.error('Error in getTicketCostStats:', error);
+//         return { totalDuration: 0, totalCostTime: 0, totalCostFixed: 0 };
+//     }
+// }

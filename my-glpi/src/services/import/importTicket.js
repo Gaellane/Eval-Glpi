@@ -6,12 +6,13 @@ import { formatDateForGlpi } from "../utils/dateUtils";
 const STATUS_MAP = {
     "nouveau": 1,
     "new": 1,
-    "en cours (assigné)": 2,
-    "en cours (assigne)": 2,
     "assigned": 2,
-    "en cours (planifié)": 3,
-    "en cours (planifie)": 3,
+    "in progress (assigned)": 2,
+    "in progress(assigned)": 2,
+    "in progress": 2,
     "planned": 3,
+    "processing (planned)": 3,
+    "processing(planned)": 3,
     "en attente": 4,
     "pending": 4,
     "résolu": 5,
@@ -50,7 +51,8 @@ const TYPE_MAP = {
 function resolveStatus(value) {
     if (!value) return 1;
     if (typeof value === 'number') return value;
-    return STATUS_MAP[value.trim().toLowerCase()] ?? 1;
+    const normalized = value.trim().toLowerCase();
+    return STATUS_MAP[normalized] ?? 1;
 }
 
 function resolvePriority(value) {
@@ -69,7 +71,6 @@ function resolveType(value) {
 
 export async function createTicket(file, assets = []) {
     try {
-        // flatten assets: may be an object { Computer: [...], Monitor: [...] } or array of arrays
         const flatAssets = (function flatten(as) {
             if (!as) return [];
             if (Array.isArray(as)) {
@@ -126,6 +127,8 @@ function getTickets(file, assets = []) {
                         : null;
                 })
                 .filter(Boolean);
+
+                console.log("[DEBUG] Ticket row - Ref:", ref,"Items:", resolvedItems);
 
             //console.log("[DEBUG] Ticket row - Ref:", ref, "Name:", name, "Status:", status, "Priority:", priority, "Type:", type, "Date:", date, "Items:", resolvedItems);
 

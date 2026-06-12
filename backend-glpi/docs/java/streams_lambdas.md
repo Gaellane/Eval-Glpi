@@ -89,3 +89,35 @@ public class OptionalExemple {
     }
 }
 ```
+
+
+# Java 8+ : Streams et Lambdas
+
+L'API Stream, introduite dans Java 8, et les expressions Lambda permettent de traiter les collections de données (filtrer, trier, transformer) de manière fonctionnelle.
+
+## 1. Expressions Lambda
+Une expression Lambda est une manière courte d'écrire une fonction anonyme.
+
+```java
+import java.util.List;
+
+public class LambdaExemple {
+    public static void main(String[] args) {
+        List<String> fruits = List.of("Pomme", "Banane", "Cerise");
+        
+        // Avec Lambda et method reference
+        fruits.forEach(System.out::println);
+    }
+}
+
+List<Integer> nombres = List.of(10, 20, 30, 40);
+
+int somme = nombres.stream()
+                   .mapToInt(Integer::intValue)
+                   .sum();
+
+System.out.println(somme);
+
+double total = produits.stream()
+                       .mapToDouble(Produit::getPrix)
+                       .sum();

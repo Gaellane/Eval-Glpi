@@ -17,6 +17,8 @@ const TYPES_WITHOUT_MODEL = new Set([
     "Certificate",
 ]);
 
+const EXCEPTIONS = ["Cartridge" , "Consumable" , "CartridgeItem" , "ConsumableItem"];
+
 export function createModel(item_type, name, id = null) {
     const model = { item_type, name };
     if (id) model.id = id;
@@ -31,16 +33,20 @@ function extractId(response) {
 }
 
 export async function save(model) {
+    let extension = "Model";
     if (TYPES_WITHOUT_MODEL.has(model.item_type)) {
-        console.warn(`[modelService] Le type "${model.item_type}" n'a pas de modèle — ignoré.`);
-        return null;
+        if(EXCEPTIONS.includes(model.item_type)) {
+            console.warn(`[modelService] Le type "${model.item_type}" n'a pas de modèle mais est une exception — traité comme un Item.`);
+            extension = "Item";
+        } else {
+            console.warn(`[modelService] Le type "${model.item_type}" n'a pas de modèle — ignoré.`);
+            return null;
+        }
     }
 
-    const url = v1_endpoint + model.item_type + "Model";
+    const url = v1_endpoint + model.item_type + extension;
     const headers = v1Headers('application/json');
-    // GLPI attend exactement { input: [{ name }] } — pas les autres champs du modèle interne
     const body = { input: [{ name: model.name }] };
-
     try {
         const response = await apiCall(url, "POST", headers, body);
         const id = extractId(response);
@@ -56,12 +62,19 @@ export async function saveMultiple(models) {
 
     const item_type = models[0].item_type;
 
-    if (TYPES_WITHOUT_MODEL.has(item_type)) {
+    let extension = "Model";
+    if (TYPES_WITHOUT_MODEL.has(item_type.trim())) {
         console.warn(`[modelService] Le type "${item_type}" n'a pas de modèle — ignoré.`);
-        return [];
+        return null;
     }
 
-    const url = v1_endpoint + item_type + "Model";
+    if(EXCEPTIONS.includes(item_type.trim())) {
+        const a = EXCEPTIONS.find(e => e.trim().toLowerCase() === item_type.trim().toLowerCase());
+        console.warn(`[modelService] Le type "${item_type}" n'a pas de modèle mais est une exception — traité comme un Item.`);
+        extension = a.endsWith("Item") ? "Type" : "ItemType";
+    } 
+
+    const url = v1_endpoint + item_type + extension;
     const headers = v1Headers('application/json');
 
     // On n'envoie que { name } pour chaque modèle — pas les champs internes (item_type, id…)

@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import Header from "../components/Header";
 import { Outlet, useNavigate } from 'react-router-dom';
 import { loginGlpi } from "../services/login/login";
-import { chargerDataStorage } from "../services/data/data";
+import { chargerDataStorage , chargerLanguesStorage } from "../services/data/data";
 
 
 function MainLayoutBO() {
@@ -15,6 +15,7 @@ function MainLayoutBO() {
         const chargerDate = async () => {
             if (!assets) {
                 const retour = await chargerDataStorage();
+                const langues = await chargerLanguesStorage();
             }
         }
         chargerDate();

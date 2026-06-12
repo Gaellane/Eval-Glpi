@@ -1,7 +1,8 @@
-import { getAll , PRIORITY_MAPPING , TYPE_MAPPING} from "../../models/assistance/Ticket";
+import { getAll , PRIORITY_MAPPING , STATUS_MAPPING, TYPE_MAPPING } from "../../models/assistance/Ticket";
 import DataTable from "../../components/ui/DataTable";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { getAllTraductionsByLangue } from '../../models/config/TicketStatus'
 
 
 function TicketList () {
@@ -9,6 +10,26 @@ function TicketList () {
     const [tickets, setTickets] = useState([]);
     const [loading, setLoading] = useState(false);
     const [displayTickets, setDisplayTickets] = useState([]);
+    const [statusmapping , setStatusMapping] = useState(STATUS_MAPPING);
+    const langue = localStorage.getItem("lang") ?  JSON.parse(localStorage.getItem("lang")) : {
+                                                                                                    "name": "Anglais",
+                                                                                                    "code": "ang",
+                                                                                                    "id": 2
+                                                                                                };
+    const fetchStatus = async () => {
+        setLoading(true);
+        try {
+            console.log("langue :" ,langue );
+            const status = await getAllTraductionsByLangue(langue.id);
+
+            setStatusMapping({...statusmapping , ...status});
+        } catch (err) {
+            console.error(err);
+            alert("Erreur lors du chargement ma status");
+        } finally {
+            setLoading(false);
+        }
+    }
 
     const fetchTickets = async () => {
         setLoading(true);
@@ -28,7 +49,7 @@ function TicketList () {
         const mapped = (tickets || []).map(t => ({
             id: t.id,
             name: t.name,
-            status: typeof t.status === 'object' ? (t.status.name ?? t.status.label ?? JSON.stringify(t.status)) : t.status,
+            status: statusmapping[t.status.id] || t.status,
             priority:  PRIORITY_MAPPING[t.priority] || t.priority,
             date: t.date ? (new Date(t.date)).toLocaleString() : '',
             type : TYPE_MAPPING[t.type] || t.type,
@@ -41,14 +62,13 @@ function TicketList () {
 
     useEffect(() => {
         fetchTickets();
+        fetchStatus();
     }, []);
 
     const handleRowClick = (row, index) => {
-        // example: log index and navigate to ticket detail by id, pass row via location state
         if (row?.id) {
             navigate(`/bo/ticket/${row.id}`, { state: row });
         } else {
-            // fallback: navigate with index and pass row
             navigate(`/bo/ticket/${index}`, { state: row });
         }
     }

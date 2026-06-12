@@ -7,6 +7,7 @@ import { chargerDataStorage } from "../services/data/data";
 function MainLayoutFO() {
     const assets = JSON.parse(localStorage.getItem("assets") || null);
     const docs = JSON.parse(localStorage.getItem("documents") || null);
+    const langues = JSON.parse(localStorage.getItem("langues") || null);    
 
 
     useEffect(() => {
@@ -14,6 +15,9 @@ function MainLayoutFO() {
           if (!assets || !docs) {
               const retour = await chargerDataStorage();
           }
+          if(!langues) {
+                const languesData = await chargerLanguesStorage();
+            }   
         }
         chargerDate();
     }, [])
