@@ -66,7 +66,7 @@ function StatusDetail() {
 
         try {
             await update(status.value , color , plusTraductions);
-            navigate("/bo/config/status");
+            navigate("/bo/ticket/status");
         } catch (error) {
             console.log(error);
             alert("Erreur lors de la sauvegarde : " + error.message);

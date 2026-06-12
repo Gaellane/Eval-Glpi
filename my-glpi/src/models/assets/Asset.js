@@ -167,9 +167,8 @@ function getImage(asset_name , documents) {
 async function getAllByType(type , documents) {
     try {
         const isException = EXCEPTIONS.includes(type);
-        const url = (isException ? v1_endpoint : v2_endpoint+"?limit=1000") + type;
+        const url = (isException ? v1_endpoint + type : v2_endpoint + type + "?limit=1000");
         const response = await apiCall(url, "GET", isException ? v1Headers() : v2Headers());
-
         return response.map(r => {
             const img = getImage(r.name, documents);
             return createAsset(
