@@ -1,5 +1,6 @@
 import { deleteTraductionsForAllValues } from "../../models/config/TicketStatus";
 import { apiCall } from "../api/api";
+import { deleteAllSuperCost } from "../../models/assistance/TicketCost";
 
 const BASE_URL = import.meta.env.VITE_BACKEND_GLPI_URL;
 const sessionToken = sessionStorage.getItem("user-token");
@@ -178,6 +179,7 @@ async function resetAllEntities(onProgress = null) {
             localStorage.removeItem("documents");
             await resetEntity(entity, onProgress);
             await deleteTraductionsForAllValues();
+            await deleteAllSuperCost();
         }
     } catch (error) {
         console.error("Erreur fatale lors du reset :", error);

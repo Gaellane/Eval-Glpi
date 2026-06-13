@@ -85,3 +85,11 @@ export async function deleteSuperCost(ticketId){
     }
 }
 
+export async function deleteAllSuperCost(){
+    try {
+        const response =await apiCall(BACKEND_URL+"/api/ticketcosts" , "DELETE" )
+    } catch (error) {
+        throw error;
+    }
+}
+

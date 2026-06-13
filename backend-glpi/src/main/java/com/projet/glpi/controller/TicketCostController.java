@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.projet.glpi.model.Langue;
 import com.projet.glpi.model.Status;
 import com.projet.glpi.model.TicketCost;
+import com.projet.glpi.repository.TicketCostRepository;
 import com.projet.glpi.service.LangueService;
 import com.projet.glpi.service.StatusService;
 import com.projet.glpi.service.TicketCostService;
@@ -27,9 +28,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class TicketCostController {
     
     private final TicketCostService ticketCostService;
+    private final TicketCostRepository ticketCostRepository;
 
-    public TicketCostController(TicketCostService ticketCostService) {
+    public TicketCostController(TicketCostService ticketCostService , TicketCostRepository ticketCostRepository) {
         this.ticketCostService = ticketCostService;
+        this.ticketCostRepository=ticketCostRepository;
     }
 
     @GetMapping("/{ticketId}")
@@ -61,6 +64,13 @@ public class TicketCostController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Map<String , Object>> deleteTicket(@PathVariable Integer id) {
         ticketCostService.deleteTicketCost(id);
+        return ResponseEntity.ok(Map.of(
+                "success", true));
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Map<String , Object>> deleteAll() {
+        ticketCostRepository.deleteAllInBatch();
         return ResponseEntity.ok(Map.of(
                 "success", true));
     }

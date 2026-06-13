@@ -217,9 +217,7 @@ export async function getTicketSuperCost(ticketId) {
         const url = BACKEND_URL+"/api/ticketcosts/"+ticketId
         const items = await getItemsByTicket(ticketId);
         const super_cost = await apiCall(url , "GET" );
-        console.log(super_cost);
         const ouverture =await apiCall( BACKEND_URL+"/api/ticketcosts/ouverture/"+ticketId, "GET")
-        console.log("id ticket" , ticketId , " response : " ,ouverture);
         const glpi_cost= await getAllByTicket(ticketId);
 
         let totalDuration = 0;
@@ -280,7 +278,6 @@ export async function getAllCostsByAssets() {
         // console.log("retour :" , retour)
         for(const i of ticketIds){
             const costs =await getTicketSuperCost(i);
-            console.log("costs : ",costs);
             // console.log("eto ambonoy")
             costs.categories.forEach(c => {
                 // console.log("categorie ", c)
@@ -290,7 +287,6 @@ export async function getAllCostsByAssets() {
                 const reopen = costs.ouverture*c.nb/costs.nbItems;
                 const totalCost = super_cost + totalGlpi + reopen;
 
-                console.log("calculs : " , super_cost , totalGlpi , reopen , totalCost);
 
                 retour[c.itemtype]["super_cost"]+=super_cost
                 retour[c.itemtype]["totalCostGlpi"]+=totalGlpi
@@ -299,7 +295,7 @@ export async function getAllCostsByAssets() {
             });
             // console.log("eto ambany")
         }
-        console.log("retour" , retour);
+        // console.log("retour" , retour);
         return retour;
     } catch(error) {
         console.log(error);

@@ -22,7 +22,6 @@ function Dashboard() {
                 setTicketCosts(data.costs);
                 const retourCosts = await getAllCostsByAssets();
                 setStatsCosts(retourCosts);
-                console.log("ETO EHHHH",Object.entries(retourCosts))
             } catch (error) {
                 alert("Erreur lors du chargement des statistiques : " + error.message);
             } finally {
@@ -71,8 +70,8 @@ function Dashboard() {
                 <CardWithHeader props={{ title: "Coût temps sans prise en compte du temps", content: ticketCosts.totalCostTimeWC }} />
             </div>
 
-            <table>
-                {/* <thead> */}
+            <table className="min-w-full divide-y divide-gray-200">
+                <thead className='bg-gray-50'>
                     <tr>
                         <th>Item</th>
                         <th>TotalGlpi</th>
@@ -80,8 +79,8 @@ function Dashboard() {
                         <th>Ouverture</th>
                         <th>Total</th>
                     </tr>
-                {/* </thead> */}
-                {/* <tbody> */}
+                </thead>
+                <tbody className='bg-white divide-y divide-gray-100'>
                     {statsCosts && Object.entries(statsCosts).map( s =>(
                         <tr>
                             <td>{ s[0] }</td>
@@ -91,7 +90,7 @@ function Dashboard() {
                             <td>{ s[1].totalCost }</td>
                         </tr>
                     ))}
-                {/* </tbody> */}
+                </tbody>
             </table>
         </div>
     );
